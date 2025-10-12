@@ -21,3 +21,4 @@ const PORT = process.env.PORT || 5300;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+app.use("/api/resources", require("./routes/resourceRoutes"));
