@@ -1,0 +1,69 @@
+# --- Node ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# --- Environment Variables ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# --- Build Files ---
+/backend/dist/
+/backend/build/
+/frontend/build/
+/frontend/dist/
+
+# --- Logs ---
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# --- OS / Editor junk ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Coverage / Testing ---
+coverage/
+.nyc_output/
+jest-cache/
+jest-test-results.json
+
+# --- Cache ---
+.cache/
+.tmp/
+.parcel-cache/
+.next/
+out/
+
+# --- Mongo / Data Dumps ---
+dump/
+*.bson
+*.json
+*.csv
+
+# --- Optional: React environment ---
+frontend/.env
+frontend/.env.local
+
+# --- Misc ---
+*.pid
+*.seed
+*.pid.lock
+
+# --- Typescript ---
+*.tsbuildinfo
+
+# --- Lock Files (optional if using yarn only) ---
+pnpm-lock.yaml
