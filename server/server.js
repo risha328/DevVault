@@ -2,6 +2,10 @@ const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const resourceRoutes = require("./routes/resourceRoutes");
+const commentRoutes = require("./routes/commentRoutes");
+const categoryRoutes = require("./routes/categoryRoutes");
 
 dotenv.config();
 connectDB();
@@ -13,13 +17,14 @@ app.use(cors());
 app.use(express.json());
 
 // Routes
-app.get("/", (req, res) => res.send("🚀 DevVault API Running"));
+app.get("/", (req, res) => res.send("DevVault API Running"));
 
-app.use("/api/auth", require("./routes/authRoutes"));
-app.use("/api/resources", require("./routes/resourceRoutes"));
-app.use("/api", require("./routes/commentRoutes"));
-app.use("/api/categories", require("./routes/categoryRoutes"));
+app.use("/api/auth", authRoutes);
+app.use("/api/resources", resourceRoutes);
+app.use("/api/comment", commentRoutes);
+app.use("/api/categories", categoryRoutes);
+
 
 // Start Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+const PORT = process.env.PORT || 5300;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
