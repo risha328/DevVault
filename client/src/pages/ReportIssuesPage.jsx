@@ -51,10 +51,26 @@ const ReportIssuesPage = () => {
     setMessage('');
 
     try {
-      // Here you would typically send the data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const token = localStorage.getItem('token');
+      const headers = {
+        'Content-Type': 'application/json',
+      };
 
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+
+      const response = await fetch('http://localhost:5300/api/issues', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit issue');
+      }
+
+      const data = await response.json();
       setMessage('✅ Issue reported successfully! Thank you for helping us improve DevVault.');
       setFormData({
         issueType: '',

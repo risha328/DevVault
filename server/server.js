@@ -8,6 +8,7 @@ const rateRoutes = require("./routes/rateRoutes");
 const bookmarkRoutes = require("./routes/bookmarkRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const issueRoutes = require("./routes/issueRoutes");
 
 dotenv.config();
 connectDB();
@@ -27,6 +28,7 @@ app.use("/api/resources", rateRoutes);
 app.use("/api/bookmark", bookmarkRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/issues", issueRoutes);
 
 
 // Start Server
