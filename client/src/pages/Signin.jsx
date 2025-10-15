@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const Signin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
@@ -168,6 +169,7 @@ const Signin = () => {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

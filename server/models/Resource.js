@@ -9,6 +9,7 @@ const resourceSchema = new mongoose.Schema({
   tags: [String],
   status: { type: String, enum: ["pending", "approved"], default: "pending" },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true });
 
 module.exports = mongoose.model("Resource", resourceSchema);

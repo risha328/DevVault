@@ -4,8 +4,11 @@ const cors = require("cors");
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
 const resourceRoutes = require("./routes/resourceRoutes");
+const rateRoutes = require("./routes/rateRoutes");
+const bookmarkRoutes = require("./routes/bookmarkRoutes");
 const commentRoutes = require("./routes/commentRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const issueRoutes = require("./routes/issueRoutes");
 
 dotenv.config();
 connectDB();
@@ -21,8 +24,11 @@ app.get("/", (req, res) => res.send("DevVault API Running"));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/resources", resourceRoutes);
+app.use("/api/resources", rateRoutes);
+app.use("/api/bookmark", bookmarkRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/issues", issueRoutes);
 
 
 // Start Server

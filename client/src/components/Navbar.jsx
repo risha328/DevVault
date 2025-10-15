@@ -78,13 +78,13 @@ const Navbar = () => {
   };
 
   const guestLinks = [
-    { to: '/resources', label: 'Explore Resources' },
+    { to: '/browse-resources', label: 'Browse Resources' },
     { to: '/categories', label: 'Categories' },
   ];
 
   const userLinks = [
-    { to: '/resources', label: 'All Resources' },
-    { to: '/add-resource', label: 'Add Resource' },
+    { to: '/browse-resources', label: 'Browse Resources' },
+    { to: '/add-resources', label: 'Add Resource' },
     { to: '/bookmarks', label: 'Bookmarks' },
     { to: '/categories', label: 'Categories' },
     { to: '/discussions', label: 'Discussions' },

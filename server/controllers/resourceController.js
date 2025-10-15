@@ -1,6 +1,6 @@
 const Resource = require("../models/Resource");
 const mongoose = require("mongoose");
-// Add new resource (status = "pending")
+// Add new resource (status = "approved" for now, can be changed to "pending" later)
 exports.addResource = async (req, res) => {
   try {
     const { title, description, link, category, tags } = req.body;
@@ -12,7 +12,7 @@ exports.addResource = async (req, res) => {
       category,
       tags,
       createdBy: req.user._id, // from auth middleware
-      status: "pending",
+      status: "approved", // Changed to approved for immediate visibility
     });
 
     const saved = await newResource.save();
