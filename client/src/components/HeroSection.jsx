@@ -67,7 +67,7 @@ const HeroSection = ({ searchQuery, setSearchQuery, handleSearch }) => {
               Browse Resources
             </Link>
             <Link
-              to="/add-resource"
+              to="/contribute"
               className="group border-2 border-white text-white px-10 py-4 rounded-xl font-semibold hover:bg-white hover:text-gray-900 transition-all duration-200 backdrop-blur-sm bg-white/10 hover:shadow-2xl transform hover:scale-105 focus:ring-4 focus:ring-white focus:ring-opacity-50 flex items-center gap-3 min-w-[200px] justify-center"
             >
               <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
