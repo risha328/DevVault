@@ -85,6 +85,7 @@ const Navbar = () => {
   const userLinks = [
     { to: '/browse-resources', label: 'Browse Resources' },
     { to: '/add-resources', label: 'Add Resource' },
+    // { to: '/write-tutorial', label: 'Write Tutorial' },
     { to: '/bookmarks', label: 'Bookmarks' },
     { to: '/categories', label: 'Categories' },
     { to: '/discussions', label: 'Discussions' },
