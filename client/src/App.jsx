@@ -10,6 +10,8 @@ import ReportIssuesPage from './pages/ReportIssuesPage';
 import SuggestFeaturesPage from './pages/SuggestFeaturesPage';
 import ImproveDocsPage from './pages/ImproveDocsPage';
 import ReportContentPage from './pages/ReportContentPage';
+import WriteTutorialPage from './pages/WriteTutorialPage';
+import TutorialPage from './pages/TutorialPage';
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
         <Route path="/suggest-features" element={<SuggestFeaturesPage />} />
         <Route path="/improve-docs" element={<ImproveDocsPage />} />
         <Route path="/report-content" element={<ReportContentPage />} />
+        <Route path="/write-tutorial" element={<WriteTutorialPage />} />
+        <Route path="/tutorial/:id" element={<TutorialPage />} />
       </Routes>
     </Router>
   );

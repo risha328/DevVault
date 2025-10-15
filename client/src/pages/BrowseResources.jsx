@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
@@ -18,15 +18,17 @@ const BrowseResources = () => {
   ];
 
   const [resources, setResources] = useState([]);
-  const [filteredResources, setFilteredResources] = useState([]);
+  const [tutorials, setTutorials] = useState([]);
+  const [filteredItems, setFilteredItems] = useState([]);
   const [categories, setCategories] = useState(defaultCategories);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Fetch resources and categories on component mount
+  // Fetch resources, tutorials and categories on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -34,14 +36,28 @@ const BrowseResources = () => {
         const resourcesResponse = await fetch('http://localhost:5300/api/resources');
         const resourcesData = await resourcesResponse.json();
 
+        // Fetch tutorials
+        const tutorialsResponse = await fetch('http://localhost:5300/api/tutorials');
+        const tutorialsData = await tutorialsResponse.json();
+
         // Fetch categories
         const categoriesResponse = await fetch('http://localhost:5300/api/categories');
         const categoriesData = await categoriesResponse.json();
 
         if (resourcesData.success) {
           setResources(resourcesData.data);
-          setFilteredResources(resourcesData.data);
         }
+
+        if (tutorialsData.success) {
+          setTutorials(tutorialsData.tutorials);
+        }
+
+        // Combine resources and tutorials
+        const allItems = [
+          ...(resourcesData.success ? resourcesData.data.map(item => ({ ...item, type: 'resource' })) : []),
+          ...(tutorialsData.success ? tutorialsData.tutorials.map(item => ({ ...item, type: 'tutorial' })) : [])
+        ];
+        setFilteredItems(allItems);
 
         if (categoriesData.success && categoriesData.data && categoriesData.data.length > 0) {
           setCategories(categoriesData.data);
@@ -50,7 +66,7 @@ const BrowseResources = () => {
           setCategories(defaultCategories);
         }
       } catch (error) {
-        setMessage('Error loading resources');
+        setMessage('Error loading resources and tutorials');
         // Fallback to default categories if API fails
         setCategories(defaultCategories);
       } finally {
@@ -59,7 +75,7 @@ const BrowseResources = () => {
     };
 
     fetchData();
-  }, []);
+  }, [location.pathname]); // Add location.pathname to trigger refetch when navigating back
 
   // Handle URL query parameter for category filtering
   useEffect(() => {
@@ -70,24 +86,27 @@ const BrowseResources = () => {
     }
   }, []);
 
-  // Filter resources based on category and search query
+  // Filter items based on category and search query
   useEffect(() => {
-    let filtered = resources;
+    let filtered = [
+      ...resources.map(item => ({ ...item, type: 'resource' })),
+      ...tutorials.map(item => ({ ...item, type: 'tutorial' }))
+    ];
 
     if (selectedCategory) {
-      filtered = filtered.filter(resource => resource.category === selectedCategory);
+      filtered = filtered.filter(item => item.category === selectedCategory);
     }
 
     if (searchQuery) {
-      filtered = filtered.filter(resource =>
-        resource.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        resource.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      filtered = filtered.filter(item =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.tags && item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase())))
       );
     }
 
-    setFilteredResources(filtered);
-  }, [selectedCategory, searchQuery, resources]);
+    setFilteredItems(filtered);
+  }, [selectedCategory, searchQuery, resources, tutorials]);
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
@@ -165,14 +184,14 @@ const BrowseResources = () => {
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                   >
                     <option value="">All Categories ({resources.length} resources)</option>
-                    {categories.map((category) => {
-                      const categoryResources = resources.filter(r => r.category === category.name);
-                      return (
-                        <option key={category._id} value={category.name}>
-                          {category.name} ({categoryResources.length} resources)
-                        </option>
-                      );
-                    })}
+                  {categories.map((category) => {
+                    const categoryItems = filteredItems.filter(item => item.category === category.name);
+                    return (
+                      <option key={category._id} value={category.name}>
+                        {category.name} ({categoryItems.length} items)
+                      </option>
+                    );
+                  })}
                   </select>
                 </div>
                 <div className="md:w-48">
@@ -197,7 +216,7 @@ const BrowseResources = () => {
               <div className="flex-1">
                 <input
                   type="text"
-                  placeholder="Search resources..."
+                  placeholder="Search resources and tutorials..."
                   value={searchQuery}
                   onChange={handleSearchChange}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
@@ -213,10 +232,10 @@ const BrowseResources = () => {
                 >
                   <option value="">All Categories</option>
                   {categories.map((category) => {
-                    const categoryResources = resources.filter(r => r.category === category.name);
+                    const categoryItems = filteredItems.filter(item => item.category === category.name);
                     return (
                       <option key={category._id} value={category.name}>
-                        {category.name} ({categoryResources.length} resources)
+                        {category.name} ({categoryItems.length} items)
                       </option>
                     );
                   })}
@@ -225,56 +244,73 @@ const BrowseResources = () => {
             </div>
           </div>
 
-          {/* Resources Grid */}
-          {filteredResources.length === 0 ? (
+          {/* Items Grid */}
+          {filteredItems.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-gray-400 text-6xl mb-4">📚</div>
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">No resources found</h3>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">No resources or tutorials found</h3>
               <p className="text-gray-500">
                 {searchQuery || selectedCategory
                   ? 'Try adjusting your search or filter criteria'
-                  : 'Be the first to add a resource!'
+                  : 'Be the first to add a resource or write a tutorial!'
                 }
               </p>
               {!searchQuery && !selectedCategory && (
-                <button
-                  onClick={() => navigate('/add-resources')}
-                  className="mt-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
-                >
-                  Add First Resource
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mt-4">
+                  <button
+                    onClick={() => navigate('/add-resources')}
+                    className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200"
+                  >
+                    Add First Resource
+                  </button>
+                  <button
+                    onClick={() => navigate('/write-tutorial')}
+                    className="bg-gradient-to-r from-green-600 to-green-700 text-white px-6 py-3 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200"
+                  >
+                    Write First Tutorial
+                  </button>
+                </div>
               )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredResources.map((resource) => (
+              {filteredItems.map((item) => (
                 <div
-                  key={resource._id}
+                  key={item._id}
                   className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
                 >
                   <div className="p-6">
+                    {/* Type Badge */}
+                    <div className="mb-2">
+                      <span className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
+                        item.type === 'tutorial' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                      }`}>
+                        {item.type === 'tutorial' ? '📝 Tutorial' : '🔗 Resource'}
+                      </span>
+                    </div>
+
                     {/* Title */}
                     <h3 className="text-xl font-bold text-gray-800 mb-2 line-clamp-2">
-                      {resource.title}
+                      {item.title}
                     </h3>
 
                     {/* Description */}
                     <p className="text-gray-600 mb-4 line-clamp-3">
-                      {resource.description || 'No description provided'}
+                      {item.description || 'No description provided'}
                     </p>
 
                     {/* Category */}
                     <div className="mb-4">
-                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(resource.category)}`}>
-                        {resource.category}
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${getCategoryColor(item.category)}`}>
+                        {item.category}
                       </span>
                     </div>
 
                     {/* Tags */}
-                    {resource.tags && resource.tags.length > 0 && (
+                    {item.tags && item.tags.length > 0 && (
                       <div className="mb-4">
                         <div className="flex flex-wrap gap-2">
-                          {resource.tags.slice(0, 3).map((tag, index) => (
+                          {item.tags.slice(0, 3).map((tag, index) => (
                             <span
                               key={index}
                               className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs"
@@ -282,32 +318,44 @@ const BrowseResources = () => {
                               #{tag}
                             </span>
                           ))}
-                          {resource.tags.length > 3 && (
+                          {item.tags.length > 3 && (
                             <span className="text-gray-400 text-xs">
-                              +{resource.tags.length - 3} more
+                              +{item.tags.length - 3} more
                             </span>
                           )}
                         </div>
                       </div>
                     )}
 
-                    {/* Link */}
-                    <a
-                      href={resource.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-4 transition-colors duration-200"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                      </svg>
-                      Visit Resource
-                    </a>
+                    {/* Link or Read More */}
+                    {item.type === 'tutorial' ? (
+                      <button
+                        onClick={() => navigate(`/tutorial/${item._id}`)}
+                        className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold mb-4 transition-colors duration-200"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg>
+                        Read Tutorial
+                      </button>
+                    ) : (
+                      <a
+                        href={item.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-4 transition-colors duration-200"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                        </svg>
+                        Visit Resource
+                      </a>
+                    )}
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                      <span>By {resource.author?.name || 'Anonymous'}</span>
-                      <span>{formatDate(resource.createdAt)}</span>
+                      <span>By {item.author?.name || 'Anonymous'}</span>
+                      <span>{formatDate(item.createdAt)}</span>
                     </div>
                   </div>
                 </div>
