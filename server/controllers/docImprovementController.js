@@ -74,3 +74,20 @@ exports.updateDocImprovementStatus = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// Get a single documentation improvement by ID
+exports.getDocImprovementById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const improvement = await DocImprovement.findById(id)
+      .populate("createdBy", "name email");
+
+    if (!improvement) {
+      return res.status(404).json({ success: false, message: "Documentation improvement not found" });
+    }
+
+    res.json({ success: true, data: improvement });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};

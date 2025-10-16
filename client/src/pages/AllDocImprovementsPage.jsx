@@ -191,7 +191,7 @@ const AllDocImprovementsPage = () => {
                   return matchesStatus && matchesDocType && matchesSearch;
                 })
                 .map((improvement) => (
-                  <div key={improvement._id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200">
+                  <div key={improvement._id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer" onClick={() => navigate(`/doc-improvements/${improvement._id}`)}>
                     {/* Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex items-center gap-3">
