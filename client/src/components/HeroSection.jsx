@@ -58,7 +58,7 @@ const HeroSection = ({ searchQuery, setSearchQuery, handleSearch }) => {
           {/* Action Buttons */}
           <div className="flex flex-col sm:flex-row gap-5 justify-center items-center mb-8">
             <Link
-              to="/resources"
+              to="/browse-resources"
               className="group bg-white text-gray-900 px-10 py-4 rounded-xl font-semibold hover:bg-gray-50 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-4 focus:ring-white focus:ring-opacity-50 flex items-center gap-3 min-w-[200px] justify-center"
             >
               <svg className="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">

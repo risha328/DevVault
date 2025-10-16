@@ -25,10 +25,11 @@ const BrowseResources = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [bookmarkedItems, setBookmarkedItems] = useState(new Set());
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch resources, tutorials and categories on component mount
+  // Fetch resources, tutorials, categories and user bookmarks on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -44,6 +45,25 @@ const BrowseResources = () => {
         const categoriesResponse = await fetch('http://localhost:5300/api/categories');
         const categoriesData = await categoriesResponse.json();
 
+        // Fetch user bookmarks if logged in
+        const token = localStorage.getItem('token');
+        let userBookmarks = new Set();
+        if (token) {
+          try {
+            const bookmarksResponse = await fetch('http://localhost:5300/api/bookmark/user/bookmarks', {
+              headers: {
+                'Authorization': `Bearer ${token}`,
+              },
+            });
+            const bookmarksData = await bookmarksResponse.json();
+            if (bookmarksData.success) {
+              userBookmarks = new Set(bookmarksData.data.map(bookmark => bookmark._id));
+            }
+          } catch (bookmarkError) {
+            console.log('User not logged in or bookmark fetch failed');
+          }
+        }
+
         if (resourcesData.success) {
           setResources(resourcesData.data);
         }
@@ -58,6 +78,7 @@ const BrowseResources = () => {
           ...(tutorialsData.success ? tutorialsData.tutorials.map(item => ({ ...item, type: 'tutorial' })) : [])
         ];
         setFilteredItems(allItems);
+        setBookmarkedItems(userBookmarks);
 
         if (categoriesData.success && categoriesData.data && categoriesData.data.length > 0) {
           setCategories(categoriesData.data);
@@ -140,6 +161,42 @@ const BrowseResources = () => {
     return colors[category] || 'bg-gray-100 text-gray-800';
   };
 
+  const handleBookmark = async (itemId, itemType) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setMessage('Please log in to bookmark items');
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5300/api/bookmark/${itemType}/${itemId}`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+
+      if (data.success) {
+        setBookmarkedItems(prev => {
+          const newSet = new Set(prev);
+          if (newSet.has(itemId)) {
+            newSet.delete(itemId);
+          } else {
+            newSet.add(itemId);
+          }
+          return newSet;
+        });
+        setMessage(data.message);
+        setTimeout(() => setMessage(''), 3000);
+      } else {
+        setMessage(data.message || 'Failed to toggle bookmark');
+      }
+    } catch (error) {
+      setMessage('Error toggling bookmark');
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -208,6 +265,30 @@ const BrowseResources = () => {
               </div>
             </div>
           </div> */}
+
+          {/* Action Buttons */}
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <button
+                onClick={() => navigate('/add-resources')}
+                className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 flex items-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add Resource
+              </button>
+              <button
+                onClick={() => navigate('/write-tutorial')}
+                className="bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-4 rounded-xl font-semibold hover:from-green-700 hover:to-green-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 focus:ring-4 focus:ring-green-500 focus:ring-opacity-50 flex items-center gap-3"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                Write Your Own Tutorial
+              </button>
+            </div>
+          </div>
 
           {/* Search Filter */}
           <div className="bg-white rounded-xl shadow-lg p-6 mb-8 overflow-visible">
@@ -327,30 +408,53 @@ const BrowseResources = () => {
                       </div>
                     )}
 
-                    {/* Link or Read More */}
-                    {item.type === 'tutorial' ? (
+                    {/* Actions */}
+                    <div className="flex items-center justify-between mb-4">
+                      {/* Link or Read More */}
+                      {item.type === 'tutorial' ? (
+                        <button
+                          onClick={() => navigate(`/tutorial/${item._id}`)}
+                          className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold transition-colors duration-200"
+                        >
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                          </svg>
+                          Read Tutorial
+                        </button>
+                      ) : (
+                        <a
+                          href={item.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold transition-colors duration-200"
+                        >
+                          <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                          Visit Resource
+                        </a>
+                      )}
+
+                      {/* Bookmark Button */}
                       <button
-                        onClick={() => navigate(`/tutorial/${item._id}`)}
-                        className="inline-flex items-center text-green-600 hover:text-green-700 font-semibold mb-4 transition-colors duration-200"
+                        onClick={() => handleBookmark(item._id, item.type)}
+                        className={`p-2 rounded-full transition-colors duration-200 ${
+                          bookmarkedItems.has(item._id)
+                            ? 'text-yellow-500 hover:text-yellow-600 bg-yellow-50'
+                            : 'text-gray-400 hover:text-gray-500 bg-gray-50 hover:bg-gray-100'
+                        }`}
+                        title={bookmarkedItems.has(item._id) ? 'Remove bookmark' : 'Add bookmark'}
                       >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        <svg
+                          className="w-5 h-5"
+                          fill={bookmarkedItems.has(item._id) ? 'currentColor' : 'none'}
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                         </svg>
-                        Read Tutorial
                       </button>
-                    ) : (
-                      <a
-                        href={item.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center text-blue-600 hover:text-blue-700 font-semibold mb-4 transition-colors duration-200"
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                        </svg>
-                        Visit Resource
-                      </a>
-                    )}
+                    </div>
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">

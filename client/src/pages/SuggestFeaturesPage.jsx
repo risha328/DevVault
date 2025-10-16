@@ -51,28 +51,37 @@ const SuggestFeaturesPage = () => {
     setMessage('');
 
     try {
-      // Here you would typically send the data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      setMessage('✅ Feature suggestion submitted successfully! Thank you for helping shape DevVault\'s future.');
-      setFormData({
-        category: '',
-        title: '',
-        description: '',
-        useCase: '',
-        benefits: '',
-        alternatives: '',
-        priority: 'medium',
-        contactEmail: ''
+      const response = await fetch('http://localhost:5300/api/feature-suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
       });
 
-      setTimeout(() => {
-        navigate('/contribute');
-      }, 3000);
+      const result = await response.json();
 
+      if (response.ok) {
+        setMessage('✅ Feature suggestion submitted successfully! Thank you for helping shape DevVault\'s future.');
+        setFormData({
+          category: '',
+          title: '',
+          description: '',
+          useCase: '',
+          benefits: '',
+          alternatives: '',
+          priority: 'medium',
+          contactEmail: ''
+        });
+
+        setTimeout(() => {
+          navigate('/feature-suggestions');
+        }, 3000);
+      } else {
+        setMessage(`❌ ${result.message || 'Failed to submit suggestion. Please try again.'}`);
+      }
     } catch (error) {
-      setMessage('❌ Failed to submit suggestion. Please try again.');
+      setMessage('❌ Failed to submit suggestion. Please check your connection and try again.');
     } finally {
       setIsSubmitting(false);
     }
