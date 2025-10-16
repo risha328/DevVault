@@ -10,6 +10,7 @@ const commentRoutes = require("./routes/commentRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const issueRoutes = require("./routes/issueRoutes");
 const tutorialRoutes = require("./routes/tutorialRoutes");
+const featureSuggestionRoutes = require("./routes/featureSuggestionRoutes");
 
 dotenv.config();
 connectDB();
@@ -31,6 +32,7 @@ app.use("/api/comment", commentRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/issues", issueRoutes);
 app.use("/api/tutorials", tutorialRoutes);
+app.use("/api/feature-suggestions", featureSuggestionRoutes);
 
 
 // Start Server

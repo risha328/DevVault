@@ -4,10 +4,13 @@ import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
+import BookmarksPage from './pages/BookmarksPage';
 import CategoriesPage from './pages/CategoriesPage';
 import ContributePage from './pages/ContributePage';
 import ReportIssuesPage from './pages/ReportIssuesPage';
 import SuggestFeaturesPage from './pages/SuggestFeaturesPage';
+import FeatureSuggestionsPage from './pages/FeatureSuggestionsPage';
+import FeatureSuggestionDetailPage from './pages/FeatureSuggestionDetailPage';
 import ImproveDocsPage from './pages/ImproveDocsPage';
 import ReportContentPage from './pages/ReportContentPage';
 import WriteTutorialPage from './pages/WriteTutorialPage';
@@ -22,10 +25,13 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/add-resources" element={<AddResources />} />
         <Route path="/browse-resources" element={<BrowseResources />} />
+        <Route path="/bookmarks" element={<BookmarksPage />} />
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/contribute" element={<ContributePage />} />
         <Route path="/report-issues" element={<ReportIssuesPage />} />
         <Route path="/suggest-features" element={<SuggestFeaturesPage />} />
+        <Route path="/feature-suggestions" element={<FeatureSuggestionsPage />} />
+        <Route path="/feature-suggestions/:id" element={<FeatureSuggestionDetailPage />} />
         <Route path="/improve-docs" element={<ImproveDocsPage />} />
         <Route path="/report-content" element={<ReportContentPage />} />
         <Route path="/write-tutorial" element={<WriteTutorialPage />} />
