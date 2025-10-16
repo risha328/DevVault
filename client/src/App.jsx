@@ -12,6 +12,7 @@ import SuggestFeaturesPage from './pages/SuggestFeaturesPage';
 import FeatureSuggestionsPage from './pages/FeatureSuggestionsPage';
 import FeatureSuggestionDetailPage from './pages/FeatureSuggestionDetailPage';
 import ImproveDocsPage from './pages/ImproveDocsPage';
+import AllDocImprovementsPage from './pages/AllDocImprovementsPage';
 import ReportContentPage from './pages/ReportContentPage';
 import WriteTutorialPage from './pages/WriteTutorialPage';
 import TutorialPage from './pages/TutorialPage';
@@ -33,6 +34,7 @@ function App() {
         <Route path="/feature-suggestions" element={<FeatureSuggestionsPage />} />
         <Route path="/feature-suggestions/:id" element={<FeatureSuggestionDetailPage />} />
         <Route path="/improve-docs" element={<ImproveDocsPage />} />
+        <Route path="/all-doc-improvements" element={<AllDocImprovementsPage />} />
         <Route path="/report-content" element={<ReportContentPage />} />
         <Route path="/write-tutorial" element={<WriteTutorialPage />} />
         <Route path="/tutorial/:id" element={<TutorialPage />} />

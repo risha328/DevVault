@@ -89,6 +89,7 @@ const Navbar = () => {
     { to: '/bookmarks', label: 'Bookmarks' },
     { to: '/categories', label: 'Categories' },
     { to: '/feature-suggestions', label: 'Feature Suggestions' },
+    { to: '/all-doc-improvements', label: 'Doc Improvements' },
     { to: '/discussions', label: 'Discussions' },
   ];
 
