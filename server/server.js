@@ -11,6 +11,7 @@ const categoryRoutes = require("./routes/categoryRoutes");
 const issueRoutes = require("./routes/issueRoutes");
 const tutorialRoutes = require("./routes/tutorialRoutes");
 const featureSuggestionRoutes = require("./routes/featureSuggestionRoutes");
+const docImprovementRoutes = require("./routes/docImprovementRoutes");
 
 dotenv.config();
 connectDB();
@@ -33,7 +34,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/issues", issueRoutes);
 app.use("/api/tutorials", tutorialRoutes);
 app.use("/api/feature-suggestions", featureSuggestionRoutes);
-
+app.use("/api/doc-improvements", docImprovementRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5300;
