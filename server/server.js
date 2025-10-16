@@ -12,6 +12,7 @@ const issueRoutes = require("./routes/issueRoutes");
 const tutorialRoutes = require("./routes/tutorialRoutes");
 const featureSuggestionRoutes = require("./routes/featureSuggestionRoutes");
 const docImprovementRoutes = require("./routes/docImprovementRoutes");
+const discussionRoutes = require("./routes/discussionRoutes");
 
 dotenv.config();
 connectDB();
@@ -35,6 +36,7 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/tutorials", tutorialRoutes);
 app.use("/api/feature-suggestions", featureSuggestionRoutes);
 app.use("/api/doc-improvements", docImprovementRoutes);
+app.use("/api/discussions", discussionRoutes);
 
 // Start Server
 const PORT = process.env.PORT || 5300;

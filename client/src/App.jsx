@@ -17,6 +17,8 @@ import ReportContentPage from './pages/ReportContentPage';
 import WriteTutorialPage from './pages/WriteTutorialPage';
 import TutorialPage from './pages/TutorialPage';
 import DocImprovementDetailPage from './pages/DocImprovementDetailPage';
+import NewDiscussionPage from './pages/NewDiscussionPage';
+import DiscussionDetailPage from './pages/DiscussionDetailPage';
 
 function App() {
   return (
@@ -40,6 +42,8 @@ function App() {
         <Route path="/write-tutorial" element={<WriteTutorialPage />} />
         <Route path="/tutorial/:id" element={<TutorialPage />} />
         <Route path="/doc-improvements/:id" element={<DocImprovementDetailPage />} />
+        <Route path="/discussions/new" element={<NewDiscussionPage />} />
+        <Route path="/discussions/:id" element={<DiscussionDetailPage />} />
       </Routes>
     </Router>
   );

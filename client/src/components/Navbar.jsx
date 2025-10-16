@@ -7,9 +7,11 @@ const Navbar = () => {
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showContributionMenu, setShowContributionMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
   const userMenuRef = useRef(null);
+  const contributionMenuRef = useRef(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -46,11 +48,14 @@ const Navbar = () => {
     }
   };
 
-  // Close user menu when clicking outside
+  // Close user menu and contribution menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setShowUserMenu(false);
+      }
+      if (contributionMenuRef.current && !contributionMenuRef.current.contains(event.target)) {
+        setShowContributionMenu(false);
       }
     };
 
@@ -88,8 +93,8 @@ const Navbar = () => {
     // { to: '/write-tutorial', label: 'Write Tutorial' },
     { to: '/bookmarks', label: 'Bookmarks' },
     { to: '/categories', label: 'Categories' },
-    { to: '/feature-suggestions', label: 'Feature Suggestions' },
-    { to: '/all-doc-improvements', label: 'Doc Improvements' },
+    // { to: '/feature-suggestions', label: 'Feature Suggestions' },
+    // { to: '/all-doc-improvements', label: 'Doc Improvements' },
     { to: '/discussions', label: 'Discussions' },
   ];
 
@@ -147,6 +152,67 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+
+            {/* Contribute Dropdown */}
+            {isLoggedIn && (
+              <div className="relative" ref={contributionMenuRef}>
+                <button
+                  onMouseEnter={() => setShowContributionMenu(true)}
+                  onMouseLeave={() => setShowContributionMenu(false)}
+                  className="text-gray-300 hover:text-white px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-gray-800/50 flex items-center"
+                >
+                  Contribute
+                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {/* Contribution Dropdown Menu */}
+                {showContributionMenu && (
+                  <div
+                    className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-200 backdrop-blur-sm"
+                    onMouseEnter={() => setShowContributionMenu(true)}
+                    onMouseLeave={() => setShowContributionMenu(false)}
+                  >
+                    <Link
+                      to="/report-content"
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <span className="text-lg mr-3"></span>
+                      Report Issues
+                    </Link>
+                    <Link
+                      to="/feature-suggestions"
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <span className="text-lg mr-3"></span>
+                      Suggest Features
+                    </Link>
+                    <Link
+                      to="/write-tutorial"
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <span className="text-lg mr-3"></span>
+                      Write Tutorials
+                    </Link>
+                    <Link
+                      to="/all-doc-improvements"
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <span className="text-lg mr-3"></span>
+                      Improve Documentation
+                    </Link>
+                    <Link
+                      to="/contribute"
+                      className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
+                    >
+                      <span className="text-lg mr-3"></span>
+                      Community Moderation
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
 
             {!isLoggedIn ? (
               <div className="flex items-center space-x-3 ml-6">
@@ -261,7 +327,51 @@ const Navbar = () => {
                   {link.label}
                 </Link>
               ))}
-              
+
+              {/* Mobile Contribute Section */}
+              {isLoggedIn && (
+                <>
+                  <div className="px-3 py-2 text-gray-400 text-sm font-semibold uppercase tracking-wider">
+                    Contribute
+                  </div>
+                  <Link
+                    to="/report-issues"
+                    className="block text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    🐛 Report Issues
+                  </Link>
+                  <Link
+                    to="/suggest-features"
+                    className="block text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    💡 Suggest Features
+                  </Link>
+                  <Link
+                    to="/write-tutorial"
+                    className="block text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    📝 Write Tutorials
+                  </Link>
+                  <Link
+                    to="/improve-docs"
+                    className="block text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    📚 Improve Documentation
+                  </Link>
+                  <Link
+                    to="/contribute"
+                    className="block text-gray-300 hover:text-white hover:bg-gray-800 px-3 py-2 rounded-md text-base font-medium"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    🤝 Community Moderation
+                  </Link>
+                </>
+              )}
+
               {!isLoggedIn ? (
                 <>
                   <Link
