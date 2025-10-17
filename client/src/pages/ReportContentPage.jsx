@@ -46,9 +46,19 @@ const ReportContentPage = () => {
     setMessage('');
 
     try {
-      // Here you would typically send the data to your backend
-      // For now, we'll simulate a successful submission
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      const response = await fetch('http://localhost:5300/api/content-reports', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit report');
+      }
+
+      const data = await response.json();
 
       setMessage('✅ Content report submitted successfully! Our moderation team will review this promptly.');
       setFormData({
