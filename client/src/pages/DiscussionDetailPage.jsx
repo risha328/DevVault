@@ -120,14 +120,23 @@ const DiscussionDetailPage = () => {
 
       const data = await response.json();
 
-      if (data.success) {
+      if (response.ok && data.success) {
         setReplies(prev => [...prev, data.data]);
         setNewReply('');
-        setDiscussion(prev => ({ 
-          ...prev, 
+        setDiscussion(prev => ({
+          ...prev,
           replies: prev.replies + 1,
           lastActivity: new Date().toISOString()
         }));
+      } else if (response.status === 401) {
+        setError('Your session has expired. Please sign in again.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('userName');
+        // Redirect to sign in after a short delay
+        setTimeout(() => {
+          window.location.href = '/signin';
+        }, 2000);
       } else {
         setError(data.message || 'Failed to post reply');
       }
