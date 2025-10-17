@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Homepage from './pages/Homepage';
+import FeaturesPage from './pages/FeaturesPage';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
 import AddResources from './pages/AddResources';
@@ -19,12 +20,14 @@ import TutorialPage from './pages/TutorialPage';
 import DocImprovementDetailPage from './pages/DocImprovementDetailPage';
 import NewDiscussionPage from './pages/NewDiscussionPage';
 import DiscussionDetailPage from './pages/DiscussionDetailPage';
+import DiscussionsPage from './pages/DiscussionsPage';
 
 function App() {
   return (
     <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
+        <Route path="/features" element={<FeaturesPage />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
         <Route path="/add-resources" element={<AddResources />} />
@@ -44,6 +47,7 @@ function App() {
         <Route path="/doc-improvements/:id" element={<DocImprovementDetailPage />} />
         <Route path="/discussions/new" element={<NewDiscussionPage />} />
         <Route path="/discussions/:id" element={<DiscussionDetailPage />} />
+        <Route path="/discussions" element={<DiscussionsPage />} />
       </Routes>
     </Router>
   );

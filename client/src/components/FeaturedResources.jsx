@@ -30,7 +30,7 @@ const FeaturedResources = () => {
       rating: 4.7,
       reviews: 67,
       duration: '35 min read',
-      thumbnail: 'https://images.unsplash.com/photo-1626716531812-693e1495de6e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+      thumbnail: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     },
   ];
 

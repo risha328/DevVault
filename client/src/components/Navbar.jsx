@@ -89,8 +89,9 @@ const Navbar = () => {
 
   const userLinks = [
     { to: '/browse-resources', label: 'Browse Resources' },
-    { to: '/add-resources', label: 'Add Resource' },
+    // { to: '/add-resources', label: 'Add Resource' },
     // { to: '/write-tutorial', label: 'Write Tutorial' },
+    { to: '/features', label: 'Features' },
     { to: '/bookmarks', label: 'Bookmarks' },
     { to: '/categories', label: 'Categories' },
     // { to: '/feature-suggestions', label: 'Feature Suggestions' },
@@ -109,8 +110,8 @@ const Navbar = () => {
           {/* Logo and Brand */}
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0 flex items-center">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-600 w-8 h-8 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-sm">DV</span>
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg border border-gray-600/30 hover:shadow-xl transition-shadow duration-200 animate-pulse">
+                <span className="text-white font-bold text-lg">DV</span>
               </div>
               <Link to="/" className="ml-2 text-xl font-bold text-white hover:text-blue-200 transition-colors duration-200">
                 DevVault
