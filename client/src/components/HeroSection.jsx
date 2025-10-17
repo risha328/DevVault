@@ -1,6 +1,146 @@
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 
 const HeroSection = ({ searchQuery, setSearchQuery, handleSearch }) => {
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const searchInputRef = useRef(null);
+  const suggestionsRef = useRef(null);
+
+  // Predefined search suggestions
+  const searchSuggestions = [
+    'Reactjs',
+    'JavaScript',
+    'Node.js',
+    'Python',
+    'Django',
+    'Flask',
+    'Vue.js',
+    'Angular',
+    'TypeScript',
+    'Next.js',
+    'Express.js',
+    'MongoDB',
+    'PostgreSQL',
+    'MySQL',
+    'GraphQL',
+    'REST API',
+    'Docker',
+    'Kubernetes',
+    'AWS',
+    'Firebase',
+    'Git',
+    'GitHub',
+    'CSS',
+    'HTML',
+    'Tailwind CSS',
+    'Bootstrap',
+    'Sass',
+    'Webpack',
+    'Vite',
+    'Jest',
+    'Cypress',
+    'React Testing Library',
+    'Redux',
+    'Zustand',
+    'Context API',
+    'Hooks',
+    'Component Library',
+    'UI/UX Design',
+    'Figma',
+    'Adobe XD',
+    'Machine Learning',
+    'Data Science',
+    'TensorFlow',
+    'PyTorch',
+    'Pandas',
+    'NumPy',
+    'Jupyter Notebook',
+    'DevOps',
+    'CI/CD',
+    'Jenkins',
+    'GitLab CI',
+    'GitHub Actions',
+    'Linux',
+    'Bash',
+    'PowerShell',
+    'Cybersecurity',
+    'Blockchain',
+    'Web3',
+    'Ethereum',
+    'Solidity',
+    'Smart Contracts'
+  ];
+
+  // Filter suggestions based on search query
+  const filteredSuggestions = searchSuggestions.filter(suggestion =>
+    suggestion.toLowerCase().includes(searchQuery.toLowerCase())
+  ).slice(0, 8); // Limit to 8 suggestions
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setShowSuggestions(value.length > 0);
+    setSelectedSuggestionIndex(-1);
+  };
+
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion);
+    setShowSuggestions(false);
+    setSelectedSuggestionIndex(-1);
+    // Auto-submit search
+    handleSearch({ preventDefault: () => {} });
+  };
+
+  // Handle keyboard navigation
+  const handleKeyDown = (e) => {
+    if (!showSuggestions || filteredSuggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev =>
+          prev < filteredSuggestions.length - 1 ? prev + 1 : prev
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => prev > 0 ? prev - 1 : -1);
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          handleSuggestionClick(filteredSuggestions[selectedSuggestionIndex]);
+        } else {
+          handleSearch(e);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+        break;
+    }
+  };
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        searchInputRef.current &&
+        !searchInputRef.current.contains(event.target) &&
+        suggestionsRef.current &&
+        !suggestionsRef.current.contains(event.target)
+      ) {
+        setShowSuggestions(false);
+        setSelectedSuggestionIndex(-1);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
   return (
     <section className="bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 text-white relative overflow-hidden">
       {/* Background Pattern */}
@@ -61,10 +201,12 @@ const HeroSection = ({ searchQuery, setSearchQuery, handleSearch }) => {
               <form onSubmit={handleSearch} className="relative group">
                 <div className="relative">
                   <input
+                    ref={searchInputRef}
                     type="text"
                     placeholder="Search frameworks, tutorials, APIs, tools..."
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
                     className="w-full px-6 py-4 rounded-xl text-gray-900 text-lg focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 shadow-xl border border-gray-200 backdrop-blur-sm bg-white/95 transition-all duration-300 placeholder-gray-500"
                   />
                   <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
@@ -81,6 +223,31 @@ const HeroSection = ({ searchQuery, setSearchQuery, handleSearch }) => {
                     </button>
                   </div>
                 </div>
+
+                {/* Search Suggestions Dropdown */}
+                {showSuggestions && filteredSuggestions.length > 0 && (
+                  <div
+                    ref={suggestionsRef}
+                    className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border border-gray-200 backdrop-blur-sm z-50 max-h-64 overflow-y-auto"
+                  >
+                    {filteredSuggestions.map((suggestion, index) => (
+                      <div
+                        key={suggestion}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className={`px-6 py-3 cursor-pointer transition-colors duration-200 flex items-center gap-3 ${
+                          index === selectedSuggestionIndex
+                            ? 'bg-blue-50 text-blue-700'
+                            : 'hover:bg-gray-50 text-gray-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span className="font-medium">{suggestion}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </form>
             </div>
 

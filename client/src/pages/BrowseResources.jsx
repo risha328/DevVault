@@ -98,12 +98,16 @@ const BrowseResources = () => {
     fetchData();
   }, [location.pathname]); // Add location.pathname to trigger refetch when navigating back
 
-  // Handle URL query parameter for category filtering
+  // Handle URL query parameter for category filtering and search
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const categoryParam = urlParams.get('category');
+    const searchParam = urlParams.get('q');
     if (categoryParam) {
       setSelectedCategory(categoryParam);
+    }
+    if (searchParam) {
+      setSearchQuery(searchParam);
     }
   }, []);
 

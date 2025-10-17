@@ -16,7 +16,7 @@ const Homepage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+      navigate(`/browse-resources?q=${encodeURIComponent(searchQuery)}`);
       setSearchQuery('');
     }
   };
