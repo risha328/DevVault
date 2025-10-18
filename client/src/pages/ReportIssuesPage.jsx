@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { issuesAPI } from '../api/apiService';
 
 const ReportIssuesPage = () => {
   const navigate = useNavigate();
@@ -51,26 +52,8 @@ const ReportIssuesPage = () => {
     setMessage('');
 
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-      };
+      await issuesAPI.create(formData);
 
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-
-      const response = await fetch('http://localhost:5300/api/issues', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit issue');
-      }
-
-      const data = await response.json();
       setMessage('✅ Issue reported successfully! Thank you for helping us improve DevVault.');
       setFormData({
         issueType: '',
@@ -85,12 +68,13 @@ const ReportIssuesPage = () => {
         contactEmail: ''
       });
 
+      //Stay on the same page instead of navigating
       setTimeout(() => {
-        navigate('/contribute');
+        navigate('/all-issues');
       }, 3000);
 
     } catch (error) {
-      setMessage('❌ Failed to submit issue. Please try again.');
+      setMessage(error.message || '❌ Failed to submit issue. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

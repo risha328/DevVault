@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { MessageSquare, Clock, User, ArrowRight, Loader2 } from 'lucide-react';
+import { discussionsAPI } from '../api/apiService';
 
 const RecentDiscussions = () => {
   const [discussions, setDiscussions] = useState([]);
@@ -14,14 +15,8 @@ const RecentDiscussions = () => {
   const fetchDiscussions = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:5300/api/discussions?limit=4&sortBy=lastActivity');
-      const data = await response.json();
-
-      if (data.success) {
-        setDiscussions(data.data);
-      } else {
-        setError('Failed to load discussions');
-      }
+      const data = await discussionsAPI.getAll({ limit: 4, sortBy: 'lastActivity' });
+      setDiscussions(data.data || []);
     } catch (err) {
       setError('Failed to load discussions');
       console.error('Error fetching discussions:', err);

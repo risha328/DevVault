@@ -1,21 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  MessageSquare, 
-  Clock, 
-  User, 
-  Send, 
-  Loader2, 
-  ThumbsUp, 
-  Flag, 
-  MoreVertical, 
+import {
+  ArrowLeft,
+  MessageSquare,
+  Clock,
+  User,
+  Send,
+  Loader2,
+  ThumbsUp,
+  Flag,
+  MoreVertical,
   Eye,
   CheckCircle2,
   MapPin,
   Share,
   Bookmark
 } from 'lucide-react';
+import { discussionsAPI } from '../api/apiService';
 
 const DiscussionDetailPage = () => {
   const { id } = useParams();
@@ -28,6 +29,11 @@ const DiscussionDetailPage = () => {
   const [submittingReply, setSubmittingReply] = useState(false);
   const [activeReplyMenu, setActiveReplyMenu] = useState(null);
 
+  // Function to validate if a string is a valid ObjectId
+  const isValidObjectId = (str) => {
+    return /^[0-9a-fA-F]{24}$/.test(str);
+  };
+
   useEffect(() => {
     fetchDiscussion();
     fetchReplies();
@@ -35,29 +41,27 @@ const DiscussionDetailPage = () => {
 
   const fetchDiscussion = async () => {
     try {
-      setLoading(true);
-      const response = await fetch(`http://localhost:5300/api/discussions/${id}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setDiscussion(data.data);
-      } else {
-        setError('Discussion not found');
+      if (!id || id === 'undefined' || !isValidObjectId(id)) {
+        setError('Invalid discussion ID');
+        setLoading(false);
+        return;
       }
+      setLoading(true);
+      const data = await discussionsAPI.getById(id);
+      setDiscussion(data.data || data);
     } catch (err) {
-      setError('Failed to load discussion');
-      console.error('Error fetching discussion:', err);
+      setError(err.message || 'Failed to load discussion');
     }
   };
 
   const fetchReplies = async () => {
     try {
-      const response = await fetch(`http://localhost:5300/api/discussions/${id}/replies`);
-      const data = await response.json();
-
-      if (data.success) {
-        setReplies(data.data);
+      if (!id || id === 'undefined' || !isValidObjectId(id)) {
+        setLoading(false);
+        return;
       }
+      const data = await discussionsAPI.getReplies(id);
+      setReplies(data.data || []);
     } catch (err) {
       console.error('Error fetching replies:', err);
     } finally {
@@ -66,17 +70,23 @@ const DiscussionDetailPage = () => {
   };
 
   const formatTimeAgo = (date) => {
+    if (!date || date === 'Invalid Date') return 'Just now';
+
     const now = new Date();
-    const diffInSeconds = Math.floor((now - new Date(date)) / 1000);
+    const dateObj = new Date(date);
+
+    if (isNaN(dateObj.getTime())) return 'Just now';
+
+    const diffInSeconds = Math.floor((now - dateObj) / 1000);
 
     if (diffInSeconds < 60) return 'Just now';
     if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
     if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
     if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-    return new Date(date).toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric', 
-      year: 'numeric' 
+    return dateObj.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
     });
   };
 
@@ -102,46 +112,30 @@ const DiscussionDetailPage = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please sign in to reply');
-        setSubmittingReply(false);
-        return;
-      }
-
-      const response = await fetch(`http://localhost:5300/api/discussions/${id}/replies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ content: newReply })
-      });
-
-      const data = await response.json();
-
-      if (response.ok && data.success) {
-        setReplies(prev => [...prev, data.data]);
-        setNewReply('');
-        setDiscussion(prev => ({
-          ...prev,
-          replies: prev.replies + 1,
-          lastActivity: new Date().toISOString()
-        }));
-      } else if (response.status === 401) {
+      const data = await discussionsAPI.createReply(id, { content: newReply });
+      const currentUserName = localStorage.getItem('userName') || 'Anonymous';
+      const newReplyObj = data.reply || data;
+      // Ensure the reply has the correct user info
+      newReplyObj.createdBy = { name: currentUserName };
+      setReplies(prev => [...prev, newReplyObj]);
+      setNewReply('');
+      setDiscussion(prev => ({
+        ...prev,
+        replies: prev.replies + 1,
+        lastActivity: new Date().toISOString()
+      }));
+    } catch (err) {
+      if (err.message.includes('sign in') || err.message.includes('session')) {
         setError('Your session has expired. Please sign in again.');
         localStorage.removeItem('token');
         localStorage.removeItem('userEmail');
         localStorage.removeItem('userName');
-        // Redirect to sign in after a short delay
         setTimeout(() => {
           window.location.href = '/signin';
         }, 2000);
       } else {
-        setError(data.message || 'Failed to post reply');
+        setError(err.message || 'Failed to post reply');
       }
-    } catch (err) {
-      setError('Failed to post reply. Please try again.');
       console.error('Error posting reply:', err);
     } finally {
       setSubmittingReply(false);

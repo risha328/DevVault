@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { resourcesAPI, tutorialsAPI, categoriesAPI, bookmarksAPI } from '../api/apiService';
 
 const BrowseResources = () => {
   const defaultCategories = [
@@ -33,54 +34,34 @@ const BrowseResources = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch resources
-        const resourcesResponse = await fetch('http://localhost:5300/api/resources');
-        const resourcesData = await resourcesResponse.json();
-
-        // Fetch tutorials
-        const tutorialsResponse = await fetch('http://localhost:5300/api/tutorials');
-        const tutorialsData = await tutorialsResponse.json();
-
-        // Fetch categories
-        const categoriesResponse = await fetch('http://localhost:5300/api/categories');
-        const categoriesData = await categoriesResponse.json();
+        // Fetch resources, tutorials, and categories in parallel
+        const [resourcesData, tutorialsData, categoriesData] = await Promise.all([
+          resourcesAPI.getAll(),
+          tutorialsAPI.getAll(),
+          categoriesAPI.getAll()
+        ]);
 
         // Fetch user bookmarks if logged in
-        const token = localStorage.getItem('token');
         let userBookmarks = new Set();
-        if (token) {
-          try {
-            const bookmarksResponse = await fetch('http://localhost:5300/api/bookmark/user/bookmarks', {
-              headers: {
-                'Authorization': `Bearer ${token}`,
-              },
-            });
-            const bookmarksData = await bookmarksResponse.json();
-            if (bookmarksData.success) {
-              userBookmarks = new Set(bookmarksData.data.map(bookmark => bookmark._id));
-            }
-          } catch (bookmarkError) {
-            console.log('User not logged in or bookmark fetch failed');
-          }
+        try {
+          const bookmarksData = await bookmarksAPI.getUserBookmarks();
+          userBookmarks = new Set(bookmarksData.data.map(bookmark => bookmark._id));
+        } catch (bookmarkError) {
+          console.log('User not logged in or bookmark fetch failed');
         }
 
-        if (resourcesData.success) {
-          setResources(resourcesData.data);
-        }
-
-        if (tutorialsData.success) {
-          setTutorials(tutorialsData.tutorials);
-        }
+        setResources(resourcesData.data || []);
+        setTutorials(tutorialsData.tutorials || []);
 
         // Combine resources and tutorials
         const allItems = [
-          ...(resourcesData.success ? resourcesData.data.map(item => ({ ...item, type: 'resource' })) : []),
-          ...(tutorialsData.success ? tutorialsData.tutorials.map(item => ({ ...item, type: 'tutorial' })) : [])
+          ...(resourcesData.data || []).map(item => ({ ...item, type: 'resource' })),
+          ...(tutorialsData.tutorials || []).map(item => ({ ...item, type: 'tutorial' }))
         ];
         setFilteredItems(allItems);
         setBookmarkedItems(userBookmarks);
 
-        if (categoriesData.success && categoriesData.data && categoriesData.data.length > 0) {
+        if (categoriesData.data && categoriesData.data.length > 0) {
           setCategories(categoriesData.data);
         } else {
           // Fallback to default categories if API fails or returns empty data
@@ -166,38 +147,21 @@ const BrowseResources = () => {
   };
 
   const handleBookmark = async (itemId, itemType) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setMessage('Please log in to bookmark items');
-      return;
-    }
-
     try {
-      const response = await fetch(`http://localhost:5300/api/bookmark/${itemType}/${itemId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
+      const data = await bookmarksAPI.toggleBookmark(itemType, itemId);
+      setBookmarkedItems(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(itemId)) {
+          newSet.delete(itemId);
+        } else {
+          newSet.add(itemId);
+        }
+        return newSet;
       });
-      const data = await response.json();
-
-      if (data.success) {
-        setBookmarkedItems(prev => {
-          const newSet = new Set(prev);
-          if (newSet.has(itemId)) {
-            newSet.delete(itemId);
-          } else {
-            newSet.add(itemId);
-          }
-          return newSet;
-        });
-        setMessage(data.message);
-        setTimeout(() => setMessage(''), 3000);
-      } else {
-        setMessage(data.message || 'Failed to toggle bookmark');
-      }
+      setMessage(data.message);
+      setTimeout(() => setMessage(''), 3000);
     } catch (error) {
-      setMessage('Error toggling bookmark');
+      setMessage(error.message || 'Error toggling bookmark');
     }
   };
 

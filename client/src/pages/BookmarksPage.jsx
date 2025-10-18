@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { bookmarksAPI } from '../api/apiService';
 
 const BookmarksPage = () => {
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
@@ -14,26 +15,10 @@ const BookmarksPage = () => {
   // Fetch user bookmarks on component mount
   useEffect(() => {
     const fetchBookmarks = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/signin');
-        return;
-      }
-
       try {
         setIsLoading(true);
-        const response = await fetch('http://localhost:5300/api/bookmark/user/bookmarks', {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        const data = await response.json();
-
-        if (data.success) {
-          setBookmarkedItems(data.data);
-        } else {
-          setMessage('Failed to load bookmarks');
-        }
+        const data = await bookmarksAPI.getUserBookmarks();
+        setBookmarkedItems(data.data || []);
       } catch (error) {
         setMessage('Error loading bookmarks');
       } finally {
@@ -42,7 +27,7 @@ const BookmarksPage = () => {
     };
 
     fetchBookmarks();
-  }, [navigate]);
+  }, []);
 
   // Filter and sort bookmarks
   const filteredAndSortedBookmarks = bookmarkedItems
@@ -98,28 +83,11 @@ const BookmarksPage = () => {
   };
 
   const handleBookmark = async (itemId, itemType) => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setMessage('Please log in to manage bookmarks');
-      return;
-    }
-
     try {
-      const response = await fetch(`http://localhost:5300/api/bookmark/${itemType}/${itemId}`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-
-      if (data.success) {
-        setBookmarkedItems(prev => prev.filter(item => item._id !== itemId));
-        setMessage('Bookmark removed successfully');
-        setTimeout(() => setMessage(''), 3000);
-      } else {
-        setMessage(data.message || 'Failed to remove bookmark');
-      }
+      await bookmarksAPI.toggleBookmark(itemId, itemType);
+      setBookmarkedItems(prev => prev.filter(item => item._id !== itemId));
+      setMessage('Bookmark removed successfully');
+      setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       setMessage('Error removing bookmark');
     }

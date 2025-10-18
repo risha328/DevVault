@@ -21,6 +21,9 @@ import DocImprovementDetailPage from './pages/DocImprovementDetailPage';
 import NewDiscussionPage from './pages/NewDiscussionPage';
 import DiscussionDetailPage from './pages/DiscussionDetailPage';
 import DiscussionsPage from './pages/DiscussionsPage';
+import AllIssuesPage from './pages/AllIssuesPage';
+import AllContentReportsPage from './pages/AllContentReportsPage';
+import ContentReportDetailPage from './pages/ContentReportDetailPage';
 
 function App() {
   return (
@@ -48,6 +51,9 @@ function App() {
         <Route path="/discussions/new" element={<NewDiscussionPage />} />
         <Route path="/discussions/:id" element={<DiscussionDetailPage />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
+        <Route path="/all-issues" element={<AllIssuesPage />} />
+        <Route path="/all-content-reports" element={<AllContentReportsPage />} />
+        <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
       </Routes>
     </Router>
   );

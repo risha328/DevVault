@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { tutorialsAPI } from '../api/apiService';
 
 const TutorialPage = () => {
   const { id } = useParams();
@@ -16,43 +17,26 @@ const TutorialPage = () => {
   useEffect(() => {
     const fetchTutorial = async () => {
       try {
+        const data = await tutorialsAPI.getById(id);
+        setTutorial(data.tutorial);
+        setLikes(data.tutorial.likes?.length || 0);
+
+        // Check if current user liked the tutorial
         const token = localStorage.getItem('token');
-        if (!token) {
-          setMessage('Authentication required to access tutorials');
-          navigate('/login');
-          return;
-        }
-
-        const response = await fetch(`http://localhost:5300/api/tutorials/${id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-
-        if (!response.ok) {
-          if (response.status === 404) {
-            setMessage('Tutorial not found');
-          } else if (response.status === 401) {
-            setMessage('Please log in to continue');
-            navigate('/login');
-          } else {
-            throw new Error('Failed to fetch tutorial');
-          }
-          return;
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          setTutorial(data.tutorial);
-          setLikes(data.tutorial.likes?.length || 0);
-
-          // Check if current user liked the tutorial
+        if (token) {
           const userId = JSON.parse(atob(token.split('.')[1])).id;
           setIsLiked(data.tutorial.likes?.includes(userId) || false);
         }
       } catch (error) {
         console.error('Error fetching tutorial:', error);
-        setMessage('Unable to load tutorial. Please try again later.');
+        if (error.message.includes('401') || error.message.includes('Authentication')) {
+          setMessage('Authentication required to access tutorials');
+          navigate('/login');
+        } else if (error.message.includes('404')) {
+          setMessage('Tutorial not found');
+        } else {
+          setMessage('Unable to load tutorial. Please try again later.');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -63,33 +47,12 @@ const TutorialPage = () => {
 
   const handleLike = async () => {
     if (isLikeLoading) return;
-    
+
     setIsLikeLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setMessage('Please log in to like tutorials');
-        navigate('/login');
-        return;
-      }
-
-      const response = await fetch(`http://localhost:5300/api/tutorials/${id}/like`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to like tutorial');
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        setLikes(data.likes);
-        setIsLiked(!isLiked);
-      }
+      const data = await tutorialsAPI.like(id);
+      setLikes(data.likes);
+      setIsLiked(!isLiked);
     } catch (error) {
       console.error('Error liking tutorial:', error);
       setMessage('Failed to like tutorial. Please try again.');

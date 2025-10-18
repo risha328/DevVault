@@ -19,8 +19,8 @@ router.get("/user", authMiddleware, getUserDocImprovements);
 // Get a single documentation improvement by ID
 router.get("/:id", authMiddleware, getDocImprovementById);
 
-// Admin routes
-router.get("/", authMiddleware, getAllDocImprovements); // Admin can view all
+// Public route - anyone can view all suggestions
+router.get("/", getAllDocImprovements);
 router.put("/:id/status", authMiddleware, updateDocImprovementStatus); // Admin can update status
 
 module.exports = router;

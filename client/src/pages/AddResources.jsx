@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { categoriesAPI, resourcesAPI } from '../api/apiService';
 
 const AddResources = () => {
   const [formData, setFormData] = useState({
@@ -21,13 +22,8 @@ const AddResources = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch('http://localhost:5300/api/categories');
-        const data = await response.json();
-        if (data.success) {
-          setCategories(data.data);
-        } else {
-          setMessage('Failed to load categories');
-        }
+        const data = await categoriesAPI.getAll();
+        setCategories(data.data || []);
       } catch (error) {
         setMessage('Error loading categories');
       } finally {
@@ -68,48 +64,28 @@ const AddResources = () => {
     setIsLoading(true);
     setMessage('');
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setMessage('Please sign in to add a resource');
-      setIsLoading(false);
-      return;
-    }
-
     try {
-      const response = await fetch('http://localhost:5300/api/resources', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          title: formData.title.trim(),
-          description: formData.description.trim(),
-          link: formData.link.trim(),
-          category: formData.category,
-          tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []
-        }),
+      const data = await resourcesAPI.create({
+        title: formData.title.trim(),
+        description: formData.description.trim(),
+        link: formData.link.trim(),
+        category: formData.category,
+        tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []
       });
 
-      const data = await response.json();
-
-      if (data.success) {
-        setMessage('🎉 Resource added successfully! It will be reviewed before approval.');
-        setFormData({
-          title: '',
-          description: '',
-          link: '',
-          category: '',
-          tags: ''
-        });
-        setTimeout(() => {
-          navigate('/');
-        }, 2000);
-      } else {
-        setMessage(data.message || 'Failed to add resource. Please try again.');
-      }
+      setMessage('🎉 Resource added successfully! It will be reviewed before approval.');
+      setFormData({
+        title: '',
+        description: '',
+        link: '',
+        category: '',
+        tags: ''
+      });
+      setTimeout(() => {
+        navigate('/');
+      }, 2000);
     } catch (error) {
-      setMessage('🚨 Network error. Please check your connection and try again.');
+      setMessage(error.message || '🚨 Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
