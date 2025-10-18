@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { contentReportsAPI } from '../api/apiService';
 
 const ReportContentPage = () => {
   const navigate = useNavigate();
@@ -46,19 +47,7 @@ const ReportContentPage = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5300/api/content-reports', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit report');
-      }
-
-      const data = await response.json();
+      await contentReportsAPI.create(formData);
 
       setMessage('✅ Content report submitted successfully! Our moderation team will review this promptly.');
       setFormData({
@@ -70,11 +59,11 @@ const ReportContentPage = () => {
       });
 
       setTimeout(() => {
-        navigate('/contribute');
+        navigate('/all-content-reports');
       }, 3000);
 
     } catch (error) {
-      setMessage('❌ Failed to submit report. Please try again.');
+      setMessage(error.message || '❌ Failed to submit report. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

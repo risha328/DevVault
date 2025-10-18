@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { featureSuggestionsAPI } from '../api/apiService';
 
 const SuggestFeaturesPage = () => {
   const navigate = useNavigate();
@@ -51,37 +52,24 @@ const SuggestFeaturesPage = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5300/api/feature-suggestions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      await featureSuggestionsAPI.create(formData);
+      setMessage('✅ Feature suggestion submitted successfully! Thank you for helping shape DevVault\'s future.');
+      setFormData({
+        category: '',
+        title: '',
+        description: '',
+        useCase: '',
+        benefits: '',
+        alternatives: '',
+        priority: 'medium',
+        contactEmail: ''
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage('✅ Feature suggestion submitted successfully! Thank you for helping shape DevVault\'s future.');
-        setFormData({
-          category: '',
-          title: '',
-          description: '',
-          useCase: '',
-          benefits: '',
-          alternatives: '',
-          priority: 'medium',
-          contactEmail: ''
-        });
-
-        setTimeout(() => {
-          navigate('/feature-suggestions');
-        }, 3000);
-      } else {
-        setMessage(`❌ ${result.message || 'Failed to submit suggestion. Please try again.'}`);
-      }
+      setTimeout(() => {
+        navigate('/feature-suggestions');
+      }, 3000);
     } catch (error) {
-      setMessage('❌ Failed to submit suggestion. Please check your connection and try again.');
+      setMessage(`❌ ${error.message || 'Failed to submit suggestion. Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }

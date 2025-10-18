@@ -24,7 +24,7 @@ exports.submitSuggestion = async (req, res) => {
   }
 };
 
-// Get all feature suggestions (for admin)
+// Get all feature suggestions (public)
 exports.getAllSuggestions = async (req, res) => {
   try {
     const suggestions = await FeatureSuggestion.find()

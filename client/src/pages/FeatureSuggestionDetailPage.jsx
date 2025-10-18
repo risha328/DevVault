@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { featureSuggestionsAPI } from '../api/apiService';
 
 const FeatureSuggestionDetailPage = () => {
   const { id } = useParams();
@@ -39,29 +40,10 @@ const FeatureSuggestionDetailPage = () => {
 
   const fetchSuggestion = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`http://localhost:5300/api/feature-suggestions/${id}`, {
-        method: 'GET',
-        headers,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setSuggestion(result.data);
-      } else {
-        setError(result.message || 'Failed to fetch suggestion');
-      }
+      const data = await featureSuggestionsAPI.getById(id);
+      setSuggestion(data.data);
     } catch (err) {
-      setError('Failed to connect to server');
+      setError(err.message || 'Failed to fetch suggestion');
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Loader2 } from 'lucide-react';
+import { discussionsAPI } from '../api/apiService';
 
 const NewDiscussionPage = () => {
   const navigate = useNavigate();
@@ -47,31 +48,10 @@ const NewDiscussionPage = () => {
     setError(null);
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Please sign in to create a discussion');
-        setLoading(false);
-        return;
-      }
-
-      const response = await fetch('http://localhost:5300/api/discussions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(formData)
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        navigate(`/discussions/${data.data._id}`);
-      } else {
-        setError(data.message || 'Failed to create discussion');
-      }
+      const data = await discussionsAPI.create(formData);
+      navigate(`/discussions/${data.data._id}`);
     } catch (err) {
-      setError('Failed to create discussion. Please try again.');
+      setError(err.message || 'Failed to create discussion. Please try again.');
       console.error('Error creating discussion:', err);
     } finally {
       setLoading(false);

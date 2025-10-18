@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { docImprovementsAPI } from '../api/apiService';
 
 const DocImprovementDetailPage = () => {
   const { id } = useParams();
@@ -34,29 +35,10 @@ const DocImprovementDetailPage = () => {
 
   const fetchImprovement = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch(`http://localhost:5300/api/doc-improvements/${id}`, {
-        method: 'GET',
-        headers,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setImprovement(result.data);
-      } else {
-        setError(result.message || 'Failed to fetch improvement details');
-      }
+      const data = await docImprovementsAPI.getById(id);
+      setImprovement(data.data);
     } catch (err) {
-      setError('Failed to connect to server');
+      setError(err.message || 'Failed to fetch improvement details');
     } finally {
       setLoading(false);
     }

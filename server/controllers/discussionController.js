@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Discussion = require("../models/Discussion");
 const DiscussionReply = require("../models/DiscussionReply");
 const User = require("../models/User");
@@ -68,7 +69,14 @@ exports.getDiscussions = async (req, res) => {
 // GET /api/discussions/:id - Get single discussion
 exports.getDiscussion = async (req, res) => {
   try {
-    const discussion = await Discussion.findById(req.params.id)
+    const { id } = req.params;
+
+    // Validate if id is a valid ObjectId
+    if (!id || id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid discussion ID" });
+    }
+
+    const discussion = await Discussion.findById(id)
       .populate('createdBy', 'name email');
 
     if (!discussion) {
@@ -214,7 +222,14 @@ exports.addReply = async (req, res) => {
 // GET /api/discussions/:id/replies - Get replies for discussion
 exports.getReplies = async (req, res) => {
   try {
-    const replies = await DiscussionReply.find({ discussionId: req.params.id })
+    const { id } = req.params;
+
+    // Validate if id is a valid ObjectId
+    if (!id || id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid discussion ID" });
+    }
+
+    const replies = await DiscussionReply.find({ discussionId: id })
       .populate('createdBy', 'name email')
       .sort({ createdAt: 1 });
 

@@ -6,8 +6,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 // Protected route for creating issues (require auth)
 router.post("/", authMiddleware, createIssue);
 
-// Protected routes (require auth)
-router.get("/", authMiddleware, getIssues);
+// Public route for getting issues
+router.get("/", getIssues);
 router.put("/:id/status", authMiddleware, updateIssueStatus);
 
 module.exports = router;

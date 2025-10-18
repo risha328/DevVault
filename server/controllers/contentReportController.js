@@ -39,6 +39,18 @@ exports.getContentReports = async (req, res) => {
   }
 };
 
+exports.getContentReportById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const contentReport = await ContentReport.findById(id).populate("createdBy", "name email");
+    if (!contentReport) return res.status(404).json({ message: "Content report not found" });
+
+    res.status(200).json({ success: true, contentReport });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.updateContentReportStatus = async (req, res) => {
   try {
     const { id } = req.params;

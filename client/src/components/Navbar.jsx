@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { authAPI } from '../api/apiService';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,22 +28,13 @@ const Navbar = () => {
     }
   }, []);
 
-  const fetchUserProfile = async (token) => {
+  const fetchUserProfile = async () => {
     try {
-      const response = await fetch('http://localhost:5300/api/auth/profile', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-      const data = await response.json();
-      if (data.success) {
-        setUserEmail(data.user.email);
-        setUserName(data.user.name);
-        localStorage.setItem('userEmail', data.user.email);
-        localStorage.setItem('userName', data.user.name);
-      }
+      const data = await authAPI.getProfile();
+      setUserEmail(data.email);
+      setUserName(data.name);
+      localStorage.setItem('userEmail', data.email);
+      localStorage.setItem('userName', data.name);
     } catch (error) {
       console.error('Error fetching user profile:', error);
     }

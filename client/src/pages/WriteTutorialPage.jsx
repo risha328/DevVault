@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { tutorialsAPI } from '../api/apiService';
 
 const WriteTutorialPage = () => {
   const navigate = useNavigate();
@@ -47,12 +48,6 @@ const WriteTutorialPage = () => {
     setMessage('');
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setMessage('❌ You must be logged in to write a tutorial.');
-        return;
-      }
-
       const tutorialData = {
         ...formData,
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
@@ -61,20 +56,7 @@ const WriteTutorialPage = () => {
         estimatedTime: formData.estimatedTime ? parseInt(formData.estimatedTime) : undefined
       };
 
-      const response = await fetch('http://localhost:5300/api/tutorials', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(tutorialData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create tutorial');
-      }
-
-      const data = await response.json();
+      await tutorialsAPI.create(tutorialData);
       setMessage('✅ Tutorial created successfully! Redirecting...');
 
       setTimeout(() => {
@@ -82,7 +64,7 @@ const WriteTutorialPage = () => {
       }, 2000);
 
     } catch (error) {
-      setMessage('❌ Failed to create tutorial. Please try again.');
+      setMessage(`❌ ${error.message || 'Failed to create tutorial. Please try again.'}`);
     } finally {
       setIsSubmitting(false);
     }

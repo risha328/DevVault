@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { docImprovementsAPI } from '../api/apiService';
 
 const ImproveDocsPage = () => {
   const navigate = useNavigate();
@@ -58,29 +59,10 @@ const ImproveDocsPage = () => {
   const fetchImprovements = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem('token');
-      const headers = {
-        'Content-Type': 'application/json',
-      };
-
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
-
-      const response = await fetch('http://localhost:5300/api/doc-improvements', {
-        method: 'GET',
-        headers,
-      });
-
-      const result = await response.json();
-
-      if (response.ok) {
-        setImprovements(result.data);
-      } else {
-        setMessage(result.message || 'Failed to fetch improvements');
-      }
+      const data = await docImprovementsAPI.getAll();
+      setImprovements(data);
     } catch (err) {
-      setMessage('Failed to connect to server');
+      setMessage(err.message || 'Failed to fetch improvements');
     } finally {
       setLoading(false);
     }
@@ -92,35 +74,22 @@ const ImproveDocsPage = () => {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:5300/api/doc-improvements', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+      await docImprovementsAPI.create(formData);
+      setMessage('✅ Documentation improvement suggestion submitted successfully! Thank you for helping improve our docs.');
+      setFormData({
+        docType: '',
+        specificPage: '',
+        issueType: '',
+        description: '',
+        suggestedFix: '',
+        contactEmail: ''
       });
 
-      const result = await response.json();
-
-      if (response.ok) {
-        setMessage('✅ Documentation improvement suggestion submitted successfully! Thank you for helping improve our docs.');
-        setFormData({
-          docType: '',
-          specificPage: '',
-          issueType: '',
-          description: '',
-          suggestedFix: '',
-          contactEmail: ''
-        });
-
-        setTimeout(() => {
-          navigate('/contribute');
-        }, 3000);
-      } else {
-        setMessage(result.message || '❌ Failed to submit suggestion. Please try again.');
-      }
+      setTimeout(() => {
+        navigate('/all-doc-improvements');
+      }, 3000);
     } catch (error) {
-      setMessage('❌ Failed to submit suggestion. Please try again.');
+      setMessage(error.message || '❌ Failed to submit suggestion. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

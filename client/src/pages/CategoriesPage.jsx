@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { categoriesAPI, resourcesAPI } from '../api/apiService';
 
 const CategoriesPage = () => {
   const [categories, setCategories] = useState([]);
@@ -36,27 +37,13 @@ const CategoriesPage = () => {
         setIsLoading(true);
         setError('');
 
-        const [categoriesResponse, resourcesResponse] = await Promise.all([
-          fetch('http://localhost:5300/api/categories'),
-          fetch('http://localhost:5300/api/resources')
-        ]);
-
-        if (!categoriesResponse.ok || !resourcesResponse.ok) {
-          throw new Error('Failed to fetch data');
-        }
-
         const [categoriesData, resourcesData] = await Promise.all([
-          categoriesResponse.json(),
-          resourcesResponse.json()
+          categoriesAPI.getAll(),
+          resourcesAPI.getAll()
         ]);
 
-        if (categoriesData.success) {
-          setCategories(categoriesData.data);
-        }
-
-        if (resourcesData.success) {
-          setResources(resourcesData.data);
-        }
+        setCategories(categoriesData.data || categoriesData);
+        setResources(resourcesData.data || resourcesData);
       } catch (err) {
         setError('Unable to load categories. Please try again later.');
         console.error('Fetch error:', err);

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { discussionsAPI } from '../api/apiService';
 
 const DiscussionsPage = () => {
   const [discussions, setDiscussions] = useState([]);
@@ -79,26 +80,20 @@ const DiscussionsPage = () => {
       setLoading(true);
       setError(null);
 
-      const params = new URLSearchParams({
-        page: currentPage.toString(),
-        limit: '12',
+      const params = {
+        page: currentPage,
+        limit: 12,
         sortBy
-      });
+      };
 
-      if (selectedCategory !== 'all') params.set('category', selectedCategory);
-      if (searchQuery) params.set('search', searchQuery);
+      if (selectedCategory !== 'all') params.category = selectedCategory;
+      if (searchQuery) params.search = searchQuery;
 
-      const response = await fetch(`http://localhost:5300/api/discussions?${params}`);
-      const data = await response.json();
-
-      if (data.success) {
-        setDiscussions(data.data);
-        setPagination(data.pagination);
-      } else {
-        setError('Failed to load discussions');
-      }
+      const data = await discussionsAPI.getAll(params);
+      setDiscussions(data.data || []);
+      setPagination(data.pagination);
     } catch (err) {
-      setError('Failed to load discussions');
+      setError(err.message || 'Failed to load discussions');
       console.error('Error fetching discussions:', err);
     } finally {
       setLoading(false);

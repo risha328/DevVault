@@ -16,8 +16,8 @@ router.post("/", submitSuggestion);
 // Authenticated user routes
 router.get("/user", authMiddleware, getUserSuggestions);
 
-// Admin routes
-router.get("/", authMiddleware, getAllSuggestions); // Admin can view all
+// Public route - anyone can view all suggestions
+router.get("/", getAllSuggestions);
 router.put("/:id/status", authMiddleware, updateSuggestionStatus); // Admin can update status
 
 // Public route - anyone can view single suggestion
