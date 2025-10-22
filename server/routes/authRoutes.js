@@ -7,6 +7,6 @@ const authMiddleware = require("../middleware/authMiddleware");
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-router.get("/get", authMiddleware, getProfile); // Protected route, add auth middleware as needed
+router.get("/profile", authMiddleware, getProfile); // Protected route, add auth middleware as needed
 
 module.exports = router;
