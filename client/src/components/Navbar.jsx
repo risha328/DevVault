@@ -37,6 +37,11 @@ const Navbar = () => {
       localStorage.setItem('userName', data.name);
     } catch (error) {
       console.error('Error fetching user profile:', error);
+      // Fallback to localStorage if API fails
+      const storedName = localStorage.getItem('userName');
+      const storedEmail = localStorage.getItem('userEmail');
+      if (storedName) setUserName(storedName);
+      if (storedEmail) setUserEmail(storedEmail);
     }
   };
 
