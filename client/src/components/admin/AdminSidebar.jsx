@@ -9,7 +9,7 @@ const AdminSidebar = () => {
     { name: 'Resources', path: '/admin/resources' },
     { name: 'Discussions', path: '/admin/discussions' },
     { name: 'Reports', path: '/admin/reports' },
-    { name: 'Issues', path: '/admin/issues' },
+    // { name: 'Issues', path: '/admin/issues' },
     { name: 'Feature Suggestions', path: '/admin/feature-suggestions' },
     { name: 'Doc Improvements', path: '/admin/doc-improvements' },
   ];
