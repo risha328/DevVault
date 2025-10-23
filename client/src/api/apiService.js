@@ -314,6 +314,11 @@ export const docImprovementsAPI = {
     return handleResponse(response);
   },
 
+  getApproved: async () => {
+    const response = await fetch(`${API_BASE_URL}/doc-improvements/approved`);
+    return handleResponse(response);
+  },
+
   getById: async (id) => {
     const response = await fetch(`${API_BASE_URL}/doc-improvements/${id}`, {
       headers: getAuthHeaders(),
@@ -329,6 +334,18 @@ export const docImprovementsAPI = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(improvementData),
+    });
+    return handleResponse(response);
+  },
+
+  updateStatus: async (id, status) => {
+    const response = await fetch(`${API_BASE_URL}/doc-improvements/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        ...getAdminAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
     });
     return handleResponse(response);
   },

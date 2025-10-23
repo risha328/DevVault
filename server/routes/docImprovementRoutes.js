@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   submitDocImprovement,
   getAllDocImprovements,
+  getApprovedDocImprovements,
   getUserDocImprovements,
   updateDocImprovementStatus,
   getDocImprovementById,
@@ -12,6 +13,9 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 // Public route - anyone can submit documentation improvement suggestions
 router.post("/", submitDocImprovement);
+
+// Public route - anyone can view approved suggestions
+router.get("/approved", getApprovedDocImprovements);
 
 // Authenticated user routes
 router.get("/user", authMiddleware, getUserDocImprovements);

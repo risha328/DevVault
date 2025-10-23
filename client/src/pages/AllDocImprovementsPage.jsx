@@ -37,7 +37,7 @@ const AllDocImprovementsPage = () => {
   const fetchImprovements = async () => {
     setLoading(true);
     try {
-      const data = await docImprovementsAPI.getAll();
+      const data = await docImprovementsAPI.getApproved();
       setImprovements(data.data || []);
     } catch (err) {
       console.error('Failed to fetch improvements:', err);
@@ -59,17 +59,17 @@ const AllDocImprovementsPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-              All Documentation <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-blue-300">Improvements</span>
+              Approved Documentation <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 to-blue-300">Improvements</span>
             </h1>
             <p className="text-xl md:text-2xl text-indigo-100 font-light max-w-3xl mx-auto leading-relaxed mb-8">
-              View all documentation improvement suggestions submitted by the community.
+              View approved documentation improvement suggestions that have been implemented.
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm text-indigo-200">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-cyan-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 9a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
                 </svg>
-                Community Driven
+                Community Approved
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
@@ -97,7 +97,7 @@ const AllDocImprovementsPage = () => {
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Search suggestions..."
+                  placeholder="Search approved improvements..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
@@ -110,18 +110,6 @@ const AllDocImprovementsPage = () => {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-4">
-              {/* Status Filter */}
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-
               {/* Doc Type Filter */}
               <select
                 value={docTypeFilter}
@@ -150,27 +138,26 @@ const AllDocImprovementsPage = () => {
           ) : improvements.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">📝</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No suggestions found</h3>
-              <p className="text-gray-600 mb-6">Try adjusting your filters or be the first to submit a suggestion!</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No approved improvements yet</h3>
+              <p className="text-gray-600 mb-6">Approved documentation improvements will appear here once they are reviewed and approved by administrators.</p>
               <button
                 onClick={() => navigate('/improve-docs')}
                 className="bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-6 py-3 rounded-lg hover:from-indigo-700 hover:to-blue-700 transition-all duration-200"
               >
-                Submit a Suggestion
+                Suggest an Improvement
               </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {improvements
                 .filter(improvement => {
-                  const matchesStatus = filter === 'all' || improvement.status === filter;
                   const matchesDocType = docTypeFilter === 'all' || improvement.docType === docTypeFilter;
                   const matchesSearch = searchQuery === '' ||
                     improvement.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     improvement.suggestedFix?.toLowerCase().includes(searchQuery.toLowerCase()) ||
                     improvement.specificPage?.toLowerCase().includes(searchQuery.toLowerCase());
 
-                  return matchesStatus && matchesDocType && matchesSearch;
+                  return matchesDocType && matchesSearch;
                 })
                 .map((improvement) => (
                   <div key={improvement._id} className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-shadow duration-200 cursor-pointer" onClick={() => navigate(`/doc-improvements/${improvement._id}`)}>
@@ -180,12 +167,8 @@ const AllDocImprovementsPage = () => {
                         <span className="text-2xl">
                           {docTypes.find(type => type.value === improvement.docType)?.icon || '📄'}
                         </span>
-                        <div className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${
-                          improvement.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          improvement.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {improvement.status.charAt(0).toUpperCase() + improvement.status.slice(1)}
+                        <div className="inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                          Approved
                         </div>
                       </div>
                     </div>
@@ -226,7 +209,7 @@ const AllDocImprovementsPage = () => {
                     {/* Footer */}
                     <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-gray-100">
                       <span>
-                        {new Date(improvement.createdAt).toLocaleDateString()}
+                        Approved on: {new Date(improvement.updatedAt || improvement.createdAt).toLocaleDateString()}
                       </span>
                       {improvement.createdBy && (
                         <span className="flex items-center gap-1">
