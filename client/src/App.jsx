@@ -12,6 +12,7 @@ import AdminDiscussionsPage from './pages/AdminDiscussionsPage';
 import AdminDiscussionDetailPage from './pages/AdminDiscussionDetailPage';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AdminReportsPage from './pages/AdminReportsPage';
+import AdminFeatureSuggestionsPage from './pages/AdminFeatureSuggestionsPage';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
 import BookmarksPage from './pages/BookmarksPage';
@@ -74,6 +75,11 @@ function App() {
         <Route path="/admin/reports" element={
           <AdminProtectedRoute>
             <AdminReportsPage />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/feature-suggestions" element={
+          <AdminProtectedRoute>
+            <AdminFeatureSuggestionsPage />
           </AdminProtectedRoute>
         } />
         <Route path="/add-resources" element={<AddResources />} />
