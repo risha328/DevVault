@@ -3,6 +3,11 @@ import Homepage from './pages/Homepage';
 import FeaturesPage from './pages/FeaturesPage';
 import Signin from './pages/Signin';
 import Signup from './pages/Signup';
+import AdminLogin from './pages/AdminLogin';
+import AdminRegister from './pages/AdminRegister';
+import AdminDashboard from './pages/AdminDashboard';
+import AdminUsersPage from './pages/AdminUsersPage';
+import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
 import BookmarksPage from './pages/BookmarksPage';
@@ -33,6 +38,18 @@ function App() {
         <Route path="/features" element={<FeaturesPage />} />
         <Route path="/signin" element={<Signin />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin/register" element={<AdminRegister />} />
+        <Route path="/admin/dashboard" element={
+          <AdminProtectedRoute>
+            <AdminDashboard />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/users" element={
+          <AdminProtectedRoute>
+            <AdminUsersPage />
+          </AdminProtectedRoute>
+        } />
         <Route path="/add-resources" element={<AddResources />} />
         <Route path="/browse-resources" element={<BrowseResources />} />
         <Route path="/bookmarks" element={<BookmarksPage />} />
