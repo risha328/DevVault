@@ -34,6 +34,18 @@ exports.getAllDocImprovements = async (req, res) => {
   }
 };
 
+// Get approved documentation improvement suggestions (for public display)
+exports.getApprovedDocImprovements = async (req, res) => {
+  try {
+    const improvements = await DocImprovement.find({ status: 'approved' })
+      .populate("createdBy", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: improvements });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // Get documentation improvement suggestions by user (if authenticated)
 exports.getUserDocImprovements = async (req, res) => {
   try {
