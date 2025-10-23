@@ -93,3 +93,49 @@ exports.getUserBookmarks = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+
+// Get all bookmarks for admin (with user and item details)
+exports.getAllBookmarks = async (req, res) => {
+  try {
+    const bookmarks = await Bookmark.find()
+      .populate("user", "name email")
+      .sort({ createdAt: -1 });
+
+    const bookmarksWithDetails = [];
+
+    for (const bookmark of bookmarks) {
+      let item;
+      let itemTitle = "Unknown Item";
+      let itemDescription = "";
+
+      if (bookmark.itemType === "resource") {
+        item = await Resource.findById(bookmark.itemId);
+        if (item) {
+          itemTitle = item.title;
+          itemDescription = item.description;
+        }
+      } else if (bookmark.itemType === "tutorial") {
+        item = await Tutorial.findById(bookmark.itemId);
+        if (item) {
+          itemTitle = item.title;
+          itemDescription = item.description;
+        }
+      }
+
+      bookmarksWithDetails.push({
+        _id: bookmark._id,
+        user: bookmark.user,
+        itemType: bookmark.itemType,
+        itemId: bookmark.itemId,
+        itemTitle,
+        itemDescription,
+        createdAt: bookmark.createdAt,
+      });
+    }
+
+    res.json({ success: true, data: bookmarksWithDetails });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};

@@ -8,10 +8,11 @@ const AdminSidebar = () => {
     { name: 'Users', path: '/admin/users' },
     { name: 'Resources', path: '/admin/resources' },
     { name: 'Discussions', path: '/admin/discussions' },
+    { name: 'Bookmarks', path: '/admin/bookmarks' },
     { name: 'Reports', path: '/admin/reports' },
     // { name: 'Issues', path: '/admin/issues' },
     { name: 'Feature Suggestions', path: '/admin/feature-suggestions' },
-    { name: 'Doc Improvements', path: '/admin/doc-improvements' },
+    { name: 'Doc Improvements', path: '/admin/docs-improvements' },
   ];
 
   return (

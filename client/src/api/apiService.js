@@ -134,6 +134,13 @@ export const bookmarksAPI = {
     });
     return handleResponse(response);
   },
+
+  getAllBookmarks: async () => {
+    const response = await fetch(`${API_BASE_URL}/bookmark/all`, {
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };
 
 // Discussions APIs
