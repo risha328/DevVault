@@ -1,13 +1,19 @@
 const express = require("express");
 const router = express.Router();
-const { createIssue, getIssues, updateIssueStatus } = require("../controllers/issueController");
+const { createIssue, getIssues, updateIssueStatus, approveIssue, getApprovedIssues, getUserIssues } = require("../controllers/issueController");
 const authMiddleware = require("../middleware/authMiddleware");
+const adminAuthMiddleware = require("../middleware/adminAuthMiddleware");
 
-// Protected route for creating issues (require auth)
+// Public routes
+router.get("/approved", getApprovedIssues);
+
+// Protected routes (require authentication)
 router.post("/", authMiddleware, createIssue);
+router.get("/user", authMiddleware, getUserIssues);
 
-// Public route for getting issues
-router.get("/", getIssues);
-router.put("/:id/status", authMiddleware, updateIssueStatus);
+// Admin routes (require admin authentication)
+router.get("/", adminAuthMiddleware, getIssues);
+router.put("/:id/status", adminAuthMiddleware, updateIssueStatus);
+router.put("/:id/approve", adminAuthMiddleware, approveIssue);
 
 module.exports = router;

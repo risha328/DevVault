@@ -251,7 +251,9 @@ export const contentReportsAPI = {
 // Issues APIs
 export const issuesAPI = {
   getAll: async () => {
-    const response = await fetch(`${API_BASE_URL}/issues`);
+    const response = await fetch(`${API_BASE_URL}/issues`, {
+      headers: getAdminAuthHeaders(),
+    });
     return handleResponse(response);
   },
 
@@ -263,6 +265,31 @@ export const issuesAPI = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(issueData),
+    });
+    return handleResponse(response);
+  },
+
+  approve: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/issues/${id}/approve`, {
+      method: 'PUT',
+      headers: {
+        ...getAdminAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+    });
+    return handleResponse(response);
+  },
+
+  getApproved: async () => {
+    const response = await fetch(`${API_BASE_URL}/issues/approved`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getUserIssues: async () => {
+    const response = await fetch(`${API_BASE_URL}/issues/user`, {
+      headers: getAuthHeaders(),
     });
     return handleResponse(response);
   },

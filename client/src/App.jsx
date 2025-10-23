@@ -11,6 +11,7 @@ import AdminResourcesPage from './pages/AdminResourcesPage';
 import AdminDiscussionsPage from './pages/AdminDiscussionsPage';
 import AdminDiscussionDetailPage from './pages/AdminDiscussionDetailPage';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
+import AdminReportsPage from './pages/AdminReportsPage';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
 import BookmarksPage from './pages/BookmarksPage';
@@ -32,6 +33,7 @@ import DiscussionsPage from './pages/DiscussionsPage';
 import AllIssuesPage from './pages/AllIssuesPage';
 import AllContentReportsPage from './pages/AllContentReportsPage';
 import ContentReportDetailPage from './pages/ContentReportDetailPage';
+import MyIssuesPage from './pages/MyIssuesPage';
 
 function App() {
   return (
@@ -68,6 +70,12 @@ function App() {
             <AdminDiscussionDetailPage />
           </AdminProtectedRoute>
         } />
+
+        <Route path="/admin/reports" element={
+          <AdminProtectedRoute>
+            <AdminReportsPage />
+          </AdminProtectedRoute>
+        } />
         <Route path="/add-resources" element={<AddResources />} />
         <Route path="/browse-resources" element={<BrowseResources />} />
         <Route path="/bookmarks" element={<BookmarksPage />} />
@@ -89,6 +97,7 @@ function App() {
         <Route path="/all-issues" element={<AllIssuesPage />} />
         <Route path="/all-content-reports" element={<AllContentReportsPage />} />
         <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
+        <Route path="/my-issues" element={<MyIssuesPage />} />
       </Routes>
     </Router>
   );
