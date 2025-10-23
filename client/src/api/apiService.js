@@ -205,6 +205,18 @@ export const featureSuggestionsAPI = {
     });
     return handleResponse(response);
   },
+
+  updateStatus: async (id, status) => {
+    const response = await fetch(`${API_BASE_URL}/feature-suggestions/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        ...getAdminAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
+    return handleResponse(response);
+  },
 };
 
 // Content Reports APIs

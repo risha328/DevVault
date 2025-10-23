@@ -59,7 +59,10 @@ const FeatureSuggestionsPage = () => {
       suggestion.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       suggestion.useCase.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return matchesStatus && matchesCategory && matchesSearch;
+    // Only show approved suggestions to regular users
+    const isApproved = suggestion.status === 'approved';
+
+    return matchesStatus && matchesCategory && matchesSearch && isApproved;
   });
 
   const getCategoryIcon = (categoryValue) => {
@@ -124,13 +127,13 @@ const FeatureSuggestionsPage = () => {
                 <svg className="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20">
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
-                {suggestions.length} Total Suggestions
+                {filteredSuggestions.length} Approved Suggestions
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-green-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                 </svg>
-                Community-Driven
+                  Community-Driven
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
@@ -165,18 +168,6 @@ const FeatureSuggestionsPage = () => {
 
             {/* Filters */}
             <div className="flex flex-wrap gap-4">
-              {/* Status Filter */}
-              <select
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-              >
-                <option value="all">All Status</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-
               {/* Category Filter */}
               <select
                 value={categoryFilter}
@@ -209,7 +200,7 @@ const FeatureSuggestionsPage = () => {
           {filteredSuggestions.length === 0 ? (
             <div className="text-center py-12">
               <div className="text-6xl mb-4">💡</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">No suggestions found</h3>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">No approved suggestions found</h3>
               <p className="text-gray-600 mb-6">Try adjusting your filters or be the first to suggest a feature!</p>
               <Link
                 to="/suggest-features"
@@ -228,8 +219,8 @@ const FeatureSuggestionsPage = () => {
                       <div className="flex items-center gap-3">
                         <span className="text-2xl">{getCategoryIcon(suggestion.category)}</span>
                         <div>
-                          <div className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${statusColors[suggestion.status]}`}>
-                            {suggestion.status.charAt(0).toUpperCase() + suggestion.status.slice(1)}
+                          <div className={`inline-block px-2 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800`}>
+                            Approved
                           </div>
                         </div>
                       </div>
