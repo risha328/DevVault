@@ -28,12 +28,12 @@ import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminResourcesPage from './pages/AdminResourcesPage';
 import AdminDiscussionsPage from './pages/AdminDiscussionsPage';
+import AdminBookmarksPage from './pages/AdminBookmarksPage';
 import AdminFeatureSuggestionsPage from './pages/AdminFeatureSuggestionsPage';
 import AdminDocsImprovementsPage from './pages/AdminDocsImprovementsPage';
 import AdminReportsPage from './pages/AdminReportsPage';
 import AdminRegister from './pages/AdminRegister';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
-//import AdminDocsImprovementsPage from './pages/AdminDocsImprovementsPage';
 
 function App() {
   return (
@@ -71,8 +71,9 @@ function App() {
         <Route path="/admin/users" element={<AdminProtectedRoute><AdminUsersPage /></AdminProtectedRoute>} />
         <Route path="/admin/resources" element={<AdminProtectedRoute><AdminResourcesPage /></AdminProtectedRoute>} />
         <Route path="/admin/discussions" element={<AdminProtectedRoute><AdminDiscussionsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/bookmarks" element={<AdminProtectedRoute><AdminBookmarksPage /></AdminProtectedRoute>} />
         <Route path="/admin/feature-suggestions" element={<AdminProtectedRoute><AdminFeatureSuggestionsPage /></AdminProtectedRoute>} />
-        <Route path="/admin/doc-improvements" element={<AdminProtectedRoute><AdminDocsImprovementsPage /></AdminProtectedRoute>} />
+        <Route path="/admin/docs-improvements" element={<AdminProtectedRoute><AdminDocsImprovementsPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
       </Routes>
     </Router>
