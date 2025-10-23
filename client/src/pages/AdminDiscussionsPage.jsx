@@ -378,7 +378,7 @@ const AdminDiscussionsPage = () => {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
                           <button
-                            onClick={() => window.open(`/admin/discussions/${discussion._id}`, '_blank')}
+                            onClick={() => window.location.href = `/admin/discussions/${discussion._id}`}
                             className="text-indigo-600 hover:text-indigo-900 transition-colors duration-200"
                           >
                             View
