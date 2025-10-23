@@ -354,4 +354,28 @@ export const adminAPI = {
     });
     return handleResponse(response);
   },
+
+  getDiscussions: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/discussions`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getDiscussionById: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/admin/discussions/${id}`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getDiscussionReplies: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/admin/discussions/${id}/replies`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };

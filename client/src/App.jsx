@@ -8,6 +8,8 @@ import AdminRegister from './pages/AdminRegister';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminResourcesPage from './pages/AdminResourcesPage';
+import AdminDiscussionsPage from './pages/AdminDiscussionsPage';
+import AdminDiscussionDetailPage from './pages/AdminDiscussionDetailPage';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
@@ -54,6 +56,16 @@ function App() {
         <Route path="/admin/resources" element={
           <AdminProtectedRoute>
             <AdminResourcesPage />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/discussions" element={
+          <AdminProtectedRoute>
+            <AdminDiscussionsPage />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/discussions/:id" element={
+          <AdminProtectedRoute>
+            <AdminDiscussionDetailPage />
           </AdminProtectedRoute>
         } />
         <Route path="/add-resources" element={<AddResources />} />

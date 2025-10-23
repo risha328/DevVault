@@ -87,3 +87,36 @@ exports.updateResourceStatus = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+exports.getDiscussions = async (req, res) => {
+  try {
+    const Discussion = require("../models/Discussion");
+    const discussions = await Discussion.find().populate('createdBy', 'name email');
+    res.json({ success: true, discussions });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getDiscussionById = async (req, res) => {
+  try {
+    const Discussion = require("../models/Discussion");
+    const discussion = await Discussion.findById(req.params.id).populate('createdBy', 'name email');
+    if (!discussion) {
+      return res.status(404).json({ message: 'Discussion not found' });
+    }
+    res.json({ success: true, discussion });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getDiscussionReplies = async (req, res) => {
+  try {
+    const DiscussionReply = require("../models/DiscussionReply");
+    const replies = await DiscussionReply.find({ discussionId: req.params.id }).populate('createdBy', 'name email').sort({ createdAt: 1 });
+    res.json({ success: true, replies });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
