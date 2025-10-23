@@ -7,6 +7,12 @@ const getAuthHeaders = () => {
   return token ? { 'Authorization': `Bearer ${token}` } : {};
 };
 
+// Helper function to get admin auth headers
+const getAdminAuthHeaders = () => {
+  const token = localStorage.getItem('adminToken');
+  return token ? { 'Authorization': `Bearer ${token}` } : {};
+};
+
 // Helper function to handle API responses
 const handleResponse = async (response) => {
   const data = await response.json();
@@ -284,6 +290,47 @@ export const docImprovementsAPI = {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(improvementData),
+    });
+    return handleResponse(response);
+  },
+};
+
+// Admin APIs
+export const adminAPI = {
+  login: async (credentials) => {
+    const response = await fetch(`${API_BASE_URL}/admin/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(credentials),
+    });
+    return handleResponse(response);
+  },
+
+  register: async (adminData) => {
+    const response = await fetch(`${API_BASE_URL}/admin/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(adminData),
+    });
+    return handleResponse(response);
+  },
+
+  getProfile: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/profile`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getUsers: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
     });
     return handleResponse(response);
   },
