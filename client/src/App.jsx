@@ -7,6 +7,7 @@ import AdminLogin from './pages/AdminLogin';
 import AdminRegister from './pages/AdminRegister';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminUsersPage from './pages/AdminUsersPage';
+import AdminResourcesPage from './pages/AdminResourcesPage';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AddResources from './pages/AddResources';
 import BrowseResources from './pages/BrowseResources';
@@ -48,6 +49,11 @@ function App() {
         <Route path="/admin/users" element={
           <AdminProtectedRoute>
             <AdminUsersPage />
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/resources" element={
+          <AdminProtectedRoute>
+            <AdminResourcesPage />
           </AdminProtectedRoute>
         } />
         <Route path="/add-resources" element={<AddResources />} />

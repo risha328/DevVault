@@ -12,7 +12,7 @@ exports.addResource = async (req, res) => {
       category,
       tags,
       createdBy: req.user._id, // from auth middleware
-      status: "approved", // Changed to approved for immediate visibility
+      status: "pending", // Set to pending for admin review
     });
 
     const saved = await newResource.save();

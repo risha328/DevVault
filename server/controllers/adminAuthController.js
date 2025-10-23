@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Resource = require("../models/Resource");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -53,6 +54,35 @@ exports.getUsers = async (req, res) => {
   try {
     const users = await User.find({ role: 'user' }).select('-password');
     res.json({ success: true, users });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.getResources = async (req, res) => {
+  try {
+    const resources = await Resource.find().populate('createdBy', 'name email');
+    res.json({ success: true, resources });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+exports.updateResourceStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    if (!['approved', 'pending'].includes(status)) {
+      return res.status(400).json({ message: 'Invalid status' });
+    }
+
+    const resource = await Resource.findByIdAndUpdate(id, { status }, { new: true });
+    if (!resource) {
+      return res.status(404).json({ message: 'Resource not found' });
+    }
+
+    res.json({ success: true, resource });
   } catch (error) {
     res.status(500).json({ message: 'Server error' });
   }

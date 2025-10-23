@@ -334,4 +334,24 @@ export const adminAPI = {
     });
     return handleResponse(response);
   },
+
+  getResources: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/resources`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  updateResourceStatus: async (id, status) => {
+    const response = await fetch(`${API_BASE_URL}/admin/resources/${id}/status`, {
+      method: 'PUT',
+      headers: {
+        ...getAdminAuthHeaders(),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ status }),
+    });
+    return handleResponse(response);
+  },
 };

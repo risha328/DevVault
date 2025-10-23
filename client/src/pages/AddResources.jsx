@@ -73,7 +73,7 @@ const AddResources = () => {
         tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag) : []
       });
 
-      setMessage('🎉 Resource added successfully! It will be reviewed before approval.');
+      setMessage('🎉 Resource submitted successfully! It will be reviewed by an admin before being published.');
       setFormData({
         title: '',
         description: '',
