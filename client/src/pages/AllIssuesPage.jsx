@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { issuesAPI } from '../api/apiService';
+import { Link } from 'react-router-dom';
 
 const AllIssuesPage = () => {
   const [issues, setIssues] = useState([]);
@@ -17,7 +18,7 @@ const AllIssuesPage = () => {
         setIsLoading(true);
         setError('');
 
-        const response = await issuesAPI.getAll();
+        const response = await issuesAPI.getApproved();
         setIssues(response.issues || response.data || []);
       } catch (err) {
         setError('Unable to load issues. Please try again later.');
@@ -130,6 +131,17 @@ const AllIssuesPage = () => {
             <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
               View and track all issues reported by the community. Help us improve DevVault by staying updated on bug fixes and feature requests.
             </p>
+
+            {/* My Issues Button */}
+            <div className="mb-8">
+              <Link
+                to="/my-issues"
+                className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-lg"
+              >
+                <span className="mr-2">📋</span>
+                View My Issues
+              </Link>
+            </div>
 
             {/* Search and Filter Controls */}
             <div className="flex flex-col md:flex-row gap-4 justify-center items-center mb-8">
