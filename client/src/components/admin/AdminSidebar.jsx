@@ -1,19 +1,20 @@
 import { Link, useLocation } from 'react-router-dom';
+import { LayoutDashboard, Users, BarChart3, FileText, MessageSquare, Bookmark, FileBarChart, Lightbulb, Edit } from 'lucide-react';
 
 const AdminSidebar = () => {
   const location = useLocation();
 
   const menuItems = [
-    { name: 'Dashboard', path: '/admin/dashboard' },
-    { name: 'Users', path: '/admin/users' },
-    { name: 'Analytics', path: '/admin/analytics' },
-    { name: 'Resources', path: '/admin/resources' },
-    { name: 'Discussions', path: '/admin/discussions' },
-    { name: 'Bookmarks', path: '/admin/bookmarks' },
-    { name: 'Reports', path: '/admin/reports' },
+    { name: 'Dashboard', path: '/admin/dashboard', icon: LayoutDashboard },
+    { name: 'Users', path: '/admin/users', icon: Users },
+    { name: 'Analytics', path: '/admin/analytics', icon: BarChart3 },
+    { name: 'Resources', path: '/admin/resources', icon: FileText },
+    { name: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
+    { name: 'Bookmarks', path: '/admin/bookmarks', icon: Bookmark },
+    { name: 'Reports', path: '/admin/reports', icon: FileBarChart },
     // { name: 'Issues', path: '/admin/issues' },
-    { name: 'Feature Suggestions', path: '/admin/feature-suggestions' },
-    { name: 'Doc Improvements', path: '/admin/docs-improvements' },
+    { name: 'Feature Suggestions', path: '/admin/feature-suggestions', icon: Lightbulb },
+    { name: 'Doc Improvements', path: '/admin/docs-improvements', icon: Edit },
   ];
 
   return (
@@ -26,13 +27,14 @@ const AdminSidebar = () => {
           <Link
             key={item.name}
             to={item.path}
-            className={`block py-2.5 px-4 rounded transition duration-200 ${
+            className={`flex items-center space-x-2 py-2.5 px-4 rounded transition duration-200 ${
               location.pathname === item.path
                 ? 'bg-gray-700 text-white'
                 : 'text-gray-400 hover:bg-gray-700 hover:text-white'
             }`}
           >
-            {item.name}
+            <item.icon size={20} />
+            <span>{item.name}</span>
           </Link>
         ))}
       </nav>
