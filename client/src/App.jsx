@@ -22,6 +22,8 @@ import NewDiscussionPage from './pages/NewDiscussionPage';
 import DiscussionDetailPage from './pages/DiscussionDetailPage';
 import DiscussionsPage from './pages/DiscussionsPage';
 import AllIssuesPage from './pages/AllIssuesPage';
+import MyIssuesPage from './pages/MyIssuesPage';
+import MyFeatureSuggestionsPage from './pages/MyFeatureSuggestionsPage';
 import AllContentReportsPage from './pages/AllContentReportsPage';
 import ContentReportDetailPage from './pages/ContentReportDetailPage';
 import AdminDashboard from './pages/AdminDashboard';
@@ -62,6 +64,8 @@ function App() {
         <Route path="/discussions/:id" element={<DiscussionDetailPage />} />
         <Route path="/discussions" element={<DiscussionsPage />} />
         <Route path="/all-issues" element={<AllIssuesPage />} />
+        <Route path="/my-issues" element={<MyIssuesPage />} />
+        <Route path="/my-feature-suggestion" element={<MyFeatureSuggestionsPage />} />
         <Route path="/all-content-reports" element={<AllContentReportsPage />} />
         <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
 

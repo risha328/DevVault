@@ -173,7 +173,7 @@ const Navbar = () => {
                     onMouseLeave={() => setShowContributionMenu(false)}
                   >
                     <Link
-                      to="/report-content"
+                      to="/all-issues"
                       className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                     >
                       <span className="text-lg mr-3"></span>

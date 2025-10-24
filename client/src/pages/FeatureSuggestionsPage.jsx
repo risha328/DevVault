@@ -182,6 +182,14 @@ const FeatureSuggestionsPage = () => {
                 ))}
               </select>
 
+              {/* View My Suggestions Button */}
+              <Link
+                to="/my-feature-suggestion"
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              >
+                View My Suggestions
+              </Link>
+
               {/* Suggest New Feature Button */}
               <Link
                 to="/suggest-features"
