@@ -35,8 +35,9 @@ import AdminFeatureSuggestionsPage from './pages/AdminFeatureSuggestionsPage';
 import AdminDocsImprovementsPage from './pages/AdminDocsImprovementsPage';
 import AdminReportsPage from './pages/AdminReportsPage';
 import AdminRegister from './pages/AdminRegister';
+import AdminLogin from './pages/AdminLogin';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
-
+import AdminAnalytics from './pages/AdminAnalytics';
 function App() {
   return (
     <Router>
@@ -70,6 +71,7 @@ function App() {
         <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
 
         {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/register" element={<AdminRegister />} />
         <Route path="/admin/dashboard" element={<AdminProtectedRoute><AdminDashboard /></AdminProtectedRoute>} />
         <Route path="/admin/users" element={<AdminProtectedRoute><AdminUsersPage /></AdminProtectedRoute>} />
@@ -79,6 +81,7 @@ function App() {
         <Route path="/admin/feature-suggestions" element={<AdminProtectedRoute><AdminFeatureSuggestionsPage /></AdminProtectedRoute>} />
         <Route path="/admin/docs-improvements" element={<AdminProtectedRoute><AdminDocsImprovementsPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
+        <Route path='/admin/analytics' element={<AdminProtectedRoute><AdminAnalytics /></AdminProtectedRoute>} />
       </Routes>
     </Router>
   );
