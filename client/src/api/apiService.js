@@ -224,6 +224,13 @@ export const featureSuggestionsAPI = {
     });
     return handleResponse(response);
   },
+
+  getUserSuggestions: async () => {
+    const response = await fetch(`${API_BASE_URL}/feature-suggestions/user`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };
 
 // Content Reports APIs

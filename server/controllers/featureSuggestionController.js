@@ -43,7 +43,13 @@ exports.getUserSuggestions = async (req, res) => {
       return res.status(401).json({ success: false, message: "Unauthorized" });
     }
 
-    const suggestions = await FeatureSuggestion.find({ createdBy: req.user._id })
+    // Find suggestions created by the user or where contactEmail matches user's email (for anonymous submissions)
+    const suggestions = await FeatureSuggestion.find({
+      $or: [
+        { createdBy: req.user._id },
+        { contactEmail: req.user.email, createdBy: null }
+      ]
+    })
       .sort({ createdAt: -1 });
     res.json({ success: true, data: suggestions });
   } catch (err) {
