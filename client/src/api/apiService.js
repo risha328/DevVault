@@ -62,6 +62,11 @@ export const resourcesAPI = {
     return handleResponse(response);
   },
 
+  getFeatured: async () => {
+    const response = await fetch(`${API_BASE_URL}/resources/featured`);
+    return handleResponse(response);
+  },
+
   create: async (resourceData) => {
     const response = await fetch(`${API_BASE_URL}/resources`, {
       method: 'POST',
@@ -462,6 +467,11 @@ export const adminAPI = {
       method: 'GET',
       headers: getAdminAuthHeaders(),
     });
+    return handleResponse(response);
+  },
+
+  getPublicStats: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/public-stats`);
     return handleResponse(response);
   },
 };
