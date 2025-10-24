@@ -289,6 +289,22 @@ exports.getDashboardStats = async (req, res) => {
   }
 };
 
+exports.getPublicStats = async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments({ role: 'user' });
+    const totalResources = await Resource.countDocuments();
+
+    res.json({
+      success: true,
+      totalUsers: totalUsers.toLocaleString(),
+      totalResources: totalResources.toLocaleString()
+    });
+  } catch (error) {
+    console.error('Public stats error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
 exports.getAnalyticsData = async (req, res) => {
   try {
     const { timeRange = '30d' } = req.query;

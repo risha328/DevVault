@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   addResource,
   getApprovedResources,
+  getFeaturedResources,
   getResourceById,
   updateResource,
   deleteResource,
@@ -12,6 +13,7 @@ const authMiddleware = require("../middleware/authMiddleware");
 
 // Public routes
 router.get("/", getApprovedResources);
+router.get("/featured", getFeaturedResources);
 router.get("/:id", authMiddleware, getResourceById);
 
 // Authenticated user routes

@@ -1,42 +1,57 @@
 import { Link } from 'react-router-dom';
 
 const CategoriesOverview = () => {
+  const categoryMapping = {
+    'Frontend': 'Web Development',
+    'Backend': 'Backend Development',
+    'DevOps': 'DevOps',
+    'Mobile': 'Mobile Development',
+    'Data Science': 'Data Science',
+    'Cloud': 'Cloud Computing'
+  };
+
   const categories = [
-    { 
-      name: 'Frontend', 
-      icon: '🎨', 
+    {
+      name: 'Frontend',
+      icon: '🎨',
       description: 'HTML, CSS, JavaScript, React, Vue',
-      gradient: 'from-purple-500 to-blue-500'
+      gradient: 'from-purple-500 to-blue-500',
+      link: '/browse-resources?category=Web%20Development'
     },
-    { 
-      name: 'Backend', 
-      icon: '⚙️', 
+    {
+      name: 'Backend',
+      icon: '⚙️',
       description: 'Node.js, Python, Java, APIs',
-      gradient: 'from-green-500 to-teal-500'
+      gradient: 'from-green-500 to-teal-500',
+      link: '/browse-resources?category=Backend%20Development'
     },
-    { 
-      name: 'DevOps', 
-      icon: '🚀', 
+    {
+      name: 'DevOps',
+      icon: '🚀',
       description: 'Docker, Kubernetes, CI/CD',
-      gradient: 'from-orange-500 to-red-500'
+      gradient: 'from-orange-500 to-red-500',
+      link: '/browse-resources?category=DevOps'
     },
-    { 
-      name: 'Mobile', 
-      icon: '📱', 
+    {
+      name: 'Mobile',
+      icon: '📱',
       description: 'React Native, Flutter, iOS, Android',
-      gradient: 'from-blue-500 to-indigo-500'
+      gradient: 'from-blue-500 to-indigo-500',
+      link: '/browse-resources?category=Mobile%20Development'
     },
-    { 
-      name: 'Data Science', 
-      icon: '📊', 
+    {
+      name: 'Data Science',
+      icon: '📊',
       description: 'Python, R, Machine Learning',
-      gradient: 'from-pink-500 to-rose-500'
+      gradient: 'from-pink-500 to-rose-500',
+      link: '/browse-resources?category=Data%20Science'
     },
-    { 
-      name: 'Cloud', 
-      icon: '☁️', 
+    {
+      name: 'Cloud',
+      icon: '☁️',
       description: 'AWS, Azure, GCP, Serverless',
-      gradient: 'from-cyan-500 to-blue-500'
+      gradient: 'from-cyan-500 to-blue-500',
+      link: '/browse-resources?category=Cloud%20Computing'
     },
   ];
 
@@ -60,7 +75,7 @@ const CategoriesOverview = () => {
           {categories.map((category, index) => (
             <Link
               key={index}
-              to={`/categories/${category.name.toLowerCase().replace(' ', '-')}`}
+              to={category.link}
               className="group relative bg-white rounded-2xl p-8 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 border border-gray-200"
             >
               {/* Gradient accent */}
@@ -101,7 +116,7 @@ const CategoriesOverview = () => {
             Can't find what you're looking for?
           </p>
           <Link
-            to="/all-categories"
+            to="/categories"
             className="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors duration-200 shadow-lg hover:shadow-xl"
           >
             <span>View All Categories</span>

@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
+import { resourcesAPI, categoriesAPI, adminAPI } from '../api/apiService';
+
 const StatisticsSection = () => {
-  const stats = [
+  const [stats, setStats] = useState([
     {
       value: "10K+",
       label: "Resources Shared",
@@ -12,7 +15,7 @@ const StatisticsSection = () => {
     },
     {
       value: "5K+",
-      label: "Active Developers",
+      label: "Users",
       color: "from-purple-500 to-purple-700",
       icon: (
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -40,7 +43,62 @@ const StatisticsSection = () => {
         </svg>
       )
     }
-  ];
+  ]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        // Fetch resources count
+        const resourcesResponse = await resourcesAPI.getAll();
+        const resourcesCount = resourcesResponse.data.length;
+
+        // Fetch categories count
+        const categoriesResponse = await categoriesAPI.getAll();
+        const categoriesCount = categoriesResponse.data.length;
+
+        // Fetch users count from public stats API
+        let usersCount = "5K+";
+        try {
+          const statsResponse = await adminAPI.getPublicStats();
+          usersCount = statsResponse.totalUsers || "5K+";
+        } catch (error) {
+          console.log('Could not fetch user count, using default');
+        }
+
+        // Format numbers
+        const formatCount = (count) => {
+          if (typeof count === 'number') {
+            if (count >= 1000) {
+              return `${Math.floor(count / 1000)}K+`;
+            }
+            return count.toString();
+          }
+          return count;
+        };
+
+        setStats(prevStats => prevStats.map(stat => {
+          if (stat.label === "Resources Shared") {
+            return { ...stat, value: formatCount(resourcesCount) };
+          }
+          if (stat.label === "Users") {
+            return { ...stat, value: formatCount(usersCount) };
+          }
+          if (stat.label === "Categories") {
+            return { ...stat, value: formatCount(categoriesCount) };
+          }
+          return stat;
+        }));
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+        // Keep default values on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStats();
+  }, []);
 
   return (
     <section className="py-20 bg-gradient-to-br from-gray-50 to-gray-100">
@@ -72,8 +130,8 @@ const StatisticsSection = () => {
               </div>
               
               {/* Value */}
-              <div className={`text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-4`}>
-                {stat.value}
+              <div className={`text-5xl font-bold bg-gradient-to-r ${stat.color} bg-clip-text text-transparent mb-4 ${loading ? 'animate-pulse' : ''}`}>
+                {loading && typeof stat.value === 'string' && stat.value.includes('K+') ? '...' : stat.value}
               </div>
               
               {/* Label */}
@@ -84,7 +142,7 @@ const StatisticsSection = () => {
               {/* Description */}
               <div className="text-gray-500 text-sm leading-relaxed">
                 {index === 0 && "Curated development resources, tools, and libraries"}
-                {index === 1 && "Passionate developers building amazing projects together"}
+                {index === 1 && "Registered users contributing to the community"}
                 {index === 2 && "Organized topics covering all aspects of development"}
                 {index === 3 && "Round-the-clock help from our global developer community"}
               </div>

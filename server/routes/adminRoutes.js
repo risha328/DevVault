@@ -1,11 +1,14 @@
 const express = require("express");
 const router = express.Router();
-const { registerAdmin, loginAdmin, getAdminProfile, getUsers, getResources, updateResourceStatus, getDiscussions, getDiscussionById, getDiscussionReplies, getDashboardStats, getAnalyticsData } = require("../controllers/adminAuthController");
+const { registerAdmin, loginAdmin, getAdminProfile, getUsers, getResources, updateResourceStatus, getDiscussions, getDiscussionById, getDiscussionReplies, getDashboardStats, getPublicStats, getAnalyticsData } = require("../controllers/adminAuthController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Public routes
 router.post("/register", registerAdmin);
 router.post("/login", loginAdmin);
+
+// Public routes
+router.get("/public-stats", getPublicStats);
 
 // Protected routes
 router.get("/profile", authMiddleware, getAdminProfile);

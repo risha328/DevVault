@@ -33,6 +33,19 @@ exports.getApprovedResources = async (req, res) => {
   }
 };
 
+// Get featured resources (top 3 by upvotes)
+exports.getFeaturedResources = async (req, res) => {
+  try {
+    const resources = await Resource.find({ status: "approved" })
+      .populate("createdBy", "name email")
+      .sort({ upvotes: -1 }) // Sort by upvotes descending
+      .limit(3); // Limit to 3 featured resources
+    res.json({ success: true, data: resources });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // Get single resource by ID
 
 
