@@ -99,3 +99,20 @@ exports.getSuggestionById = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+// Delete suggestion (admin only)
+exports.deleteSuggestion = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const suggestion = await FeatureSuggestion.findByIdAndDelete(id);
+
+    if (!suggestion) {
+      return res.status(404).json({ success: false, message: "Suggestion not found" });
+    }
+
+    res.json({ success: true, message: "Suggestion deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
