@@ -236,6 +236,14 @@ export const featureSuggestionsAPI = {
     });
     return handleResponse(response);
   },
+
+  delete: async (id) => {
+    const response = await fetch(`${API_BASE_URL}/feature-suggestions/${id}`, {
+      method: 'DELETE',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };
 
 // Content Reports APIs
