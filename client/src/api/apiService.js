@@ -448,4 +448,20 @@ export const adminAPI = {
     });
     return handleResponse(response);
   },
+
+  getDashboardStats: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/dashboard`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getAnalyticsData: async (timeRange = '30d') => {
+    const response = await fetch(`${API_BASE_URL}/admin/analytics?timeRange=${timeRange}`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };
