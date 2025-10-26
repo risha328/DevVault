@@ -40,6 +40,8 @@ import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AdminAnalytics from './pages/AdminAnalytics';
 import MyUploadsPage from './pages/MyUploadsPage';
 import UserProfilePage from './pages/UserProfilePage';
+import UserProfileStatsPage from './pages/UserProfileStatsPage';
+import LeaderboardPage from './pages/LeaderboardPage';
 function App() {
   return (
     <Router>
@@ -73,6 +75,8 @@ function App() {
         <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
         <Route path='/my-uploads' element={<MyUploadsPage/>} />
         <Route path="/user/:userId" element={<UserProfilePage />} />
+        <Route path="/user/:userId/stats" element={<UserProfileStatsPage />} />
+        <Route path="/leaderboard" element={<LeaderboardPage />} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

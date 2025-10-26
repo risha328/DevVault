@@ -62,6 +62,11 @@ export const userAPI = {
     return handleResponse(response);
   },
 
+  getUserStats: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/auth/user/${userId}/stats`);
+    return handleResponse(response);
+  },
+
   getUserResources: async (userId) => {
     const response = await fetch(`${API_BASE_URL}/resources/user/${userId}`);
     return handleResponse(response);
@@ -69,6 +74,11 @@ export const userAPI = {
 
   getUserTutorials: async (userId) => {
     const response = await fetch(`${API_BASE_URL}/tutorials/user/${userId}`);
+    return handleResponse(response);
+  },
+
+  getLeaderboard: async () => {
+    const response = await fetch(`${API_BASE_URL}/auth/leaderboard`);
     return handleResponse(response);
   },
 };

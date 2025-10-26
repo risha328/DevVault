@@ -1,6 +1,13 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Resource = require("../models/Resource");
+const Tutorial = require("../models/Tutorial");
+const Issue = require("../models/Issue");
+const FeatureSuggestion = require("../models/FeatureSuggestion");
+const DocImprovement = require("../models/DocImprovement");
+const Discussion = require("../models/Discussion");
+const ContentReport = require("../models/ContentReport");
 
 exports.registerUser = async (req, res) => {
   try {
@@ -63,6 +70,121 @@ exports.getUserProfile = async (req, res) => {
     res.status(200).json({
       success: true,
       user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getUserStats = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await User.findById(userId).select('-password');
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Get all contribution counts in parallel
+    const [
+      resourcesCount,
+      tutorialsCount,
+      issuesCount,
+      featureSuggestionsCount,
+      docImprovementsCount,
+      discussionsCount,
+      contentReportsCount
+    ] = await Promise.all([
+      Resource.countDocuments({ createdBy: userId }),
+      Tutorial.countDocuments({ createdBy: userId }),
+      Issue.countDocuments({ createdBy: userId }),
+      FeatureSuggestion.countDocuments({ createdBy: userId }),
+      DocImprovement.countDocuments({ createdBy: userId }),
+      Discussion.countDocuments({ createdBy: userId }),
+      ContentReport.countDocuments({ createdBy: userId })
+    ]);
+
+    // Calculate total contributions
+    const totalContributions = resourcesCount + tutorialsCount + issuesCount +
+                              featureSuggestionsCount + docImprovementsCount +
+                              discussionsCount + contentReportsCount;
+
+    res.status(200).json({
+      success: true,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      stats: {
+        resources: resourcesCount,
+        tutorials: tutorialsCount,
+        issues: issuesCount,
+        featureSuggestions: featureSuggestionsCount,
+        docImprovements: docImprovementsCount,
+        discussions: discussionsCount,
+        contentReports: contentReportsCount,
+        totalContributions
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
+exports.getLeaderboard = async (req, res) => {
+  try {
+    // Get all users
+    const users = await User.find({}).select('-password');
+
+    // Calculate stats for each user in parallel
+    const leaderboardPromises = users.map(async (user) => {
+      const userId = user._id;
+
+      // Get all contribution counts in parallel
+      const [
+        resourcesCount,
+        tutorialsCount,
+        issuesCount,
+        featureSuggestionsCount,
+        docImprovementsCount,
+        discussionsCount,
+        contentReportsCount
+      ] = await Promise.all([
+        Resource.countDocuments({ createdBy: userId }),
+        Tutorial.countDocuments({ createdBy: userId }),
+        Issue.countDocuments({ createdBy: userId }),
+        FeatureSuggestion.countDocuments({ createdBy: userId }),
+        DocImprovement.countDocuments({ createdBy: userId }),
+        Discussion.countDocuments({ createdBy: userId }),
+        ContentReport.countDocuments({ createdBy: userId })
+      ]);
+
+      // Calculate total contributions
+      const totalContributions = resourcesCount + tutorialsCount + issuesCount +
+                                featureSuggestionsCount + docImprovementsCount +
+                                discussionsCount + contentReportsCount;
+
+      return {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        stats: {
+          resources: resourcesCount,
+          tutorials: tutorialsCount,
+          issues: issuesCount,
+          featureSuggestions: featureSuggestionsCount,
+          docImprovements: docImprovementsCount,
+          discussions: discussionsCount,
+          contentReports: contentReportsCount,
+          totalContributions
+        }
+      };
+    });
+
+    // Wait for all calculations to complete
+    const leaderboard = await Promise.all(leaderboardPromises);
+
+    // Sort by total contributions descending
+    leaderboard.sort((a, b) => b.stats.totalContributions - a.stats.totalContributions);
+
+    res.status(200).json({
+      success: true,
+      leaderboard
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
