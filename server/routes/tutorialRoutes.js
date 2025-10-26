@@ -7,16 +7,18 @@ const {
   updateTutorial,
   deleteTutorial,
   likeTutorial,
-  getUserTutorials
+  getUserTutorials,
+  getUserTutorialsById
 } = require("../controllers/tutorialController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Public routes
 router.get("/", getTutorials);
-router.get("/user", authMiddleware, getUserTutorials);
+router.get("/user/:userId", getUserTutorialsById); // Public route to get user's published tutorials
 router.get("/:id", getTutorialById);
 
 // Protected routes
+router.get("/user", authMiddleware, getUserTutorials);
 router.post("/", authMiddleware, createTutorial);
 router.put("/:id", authMiddleware, updateTutorial);
 router.delete("/:id", authMiddleware, deleteTutorial);

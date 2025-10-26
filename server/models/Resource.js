@@ -9,6 +9,7 @@ const resourceSchema = new mongoose.Schema({
   tags: [String],
   status: { type: String, enum: ["pending", "approved"], default: "pending" },
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  createdByName: { type: String },
   upvotes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
 }, { timestamps: true });
 

@@ -435,7 +435,17 @@ const BrowseResources = () => {
 
                     {/* Footer */}
                     <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-100">
-                      <span>By {item.author?.name || 'Anonymous'}</span>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-gradient-to-br from-gray-400 to-gray-600 rounded-full flex items-center justify-center text-white text-xs font-semibold">
+                          {item.createdBy?.name?.charAt(0) || item.createdByName?.charAt(0) || 'A'}
+                        </div>
+                        <span
+                          className="hover:text-blue-600 cursor-pointer transition-colors duration-200"
+                          onClick={() => navigate(`/user/${item.createdBy?._id || item.createdBy}`)}
+                        >
+                          {item.createdBy?.name || item.createdByName || 'Anonymous'}
+                        </span>
+                      </div>
                       <span>{formatDate(item.createdAt)}</span>
                     </div>
                   </div>
