@@ -46,6 +46,19 @@ exports.getFeaturedResources = async (req, res) => {
   }
 };
 
+// Get user's own resources
+exports.getUserResources = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const resources = await Resource.find({ createdBy: userId })
+      .populate("createdBy", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: resources });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
 // Get single resource by ID
 
 
