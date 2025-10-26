@@ -7,6 +7,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState('');
   const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showContributionMenu, setShowContributionMenu] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,9 +19,11 @@ const Navbar = () => {
     const token = localStorage.getItem('token');
     const email = localStorage.getItem('userEmail');
     const name = localStorage.getItem('userName');
+    const id = localStorage.getItem('userId');
     setIsLoggedIn(!!token);
     setUserEmail(email || '');
     setUserName(name || '');
+    setUserId(id || '');
 
     // Fetch user profile if logged in
     if (token) {
@@ -33,15 +36,19 @@ const Navbar = () => {
       const data = await authAPI.getProfile();
       setUserEmail(data.email);
       setUserName(data.name);
+      setUserId(data.user.id);
       localStorage.setItem('userEmail', data.email);
       localStorage.setItem('userName', data.name);
+      localStorage.setItem('userId', data.user.id);
     } catch (error) {
       console.error('Error fetching user profile:', error);
       // Fallback to localStorage if API fails
       const storedName = localStorage.getItem('userName');
       const storedEmail = localStorage.getItem('userEmail');
+      const storedId = localStorage.getItem('userId');
       if (storedName) setUserName(storedName);
       if (storedEmail) setUserEmail(storedEmail);
+      if (storedId) setUserId(storedId);
     }
   };
 
@@ -245,7 +252,7 @@ const Navbar = () => {
                       <p className="text-xs text-gray-500 mt-1">Welcome back!</p>
                     </div>
                     <Link
-                      to="/profile"
+                      to={`/user/${userId}/stats`}
                       className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200"
                       onClick={() => setShowUserMenu(false)}
                     >
