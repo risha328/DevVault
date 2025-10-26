@@ -55,6 +55,24 @@ export const authAPI = {
   },
 };
 
+// User APIs
+export const userAPI = {
+  getUserProfile: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/auth/user/${userId}`);
+    return handleResponse(response);
+  },
+
+  getUserResources: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/resources/user/${userId}`);
+    return handleResponse(response);
+  },
+
+  getUserTutorials: async (userId) => {
+    const response = await fetch(`${API_BASE_URL}/tutorials/user/${userId}`);
+    return handleResponse(response);
+  },
+};
+
 // Resources APIs
 export const resourcesAPI = {
   getAll: async () => {

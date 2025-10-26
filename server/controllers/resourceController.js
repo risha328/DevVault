@@ -12,6 +12,7 @@ exports.addResource = async (req, res) => {
       category,
       tags,
       createdBy: req.user._id, // from auth middleware
+      createdByName: req.user.name,
       status: "pending", // Set to pending for admin review
     });
 
@@ -51,6 +52,19 @@ exports.getUserResources = async (req, res) => {
   try {
     const userId = req.user._id;
     const resources = await Resource.find({ createdBy: userId })
+      .populate("createdBy", "name email")
+      .sort({ createdAt: -1 });
+    res.json({ success: true, data: resources });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+// Get resources by user ID (public)
+exports.getUserResourcesById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const resources = await Resource.find({ createdBy: userId, status: "approved" })
       .populate("createdBy", "name email")
       .sort({ createdAt: -1 });
     res.json({ success: true, data: resources });

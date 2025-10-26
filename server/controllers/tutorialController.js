@@ -152,3 +152,15 @@ exports.getUserTutorials = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.getUserTutorialsById = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const tutorials = await Tutorial.find({ createdBy: userId, status: "published" })
+      .populate("createdBy", "name email")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, tutorials });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
