@@ -4,6 +4,7 @@ const {
   addResource,
   getApprovedResources,
   getFeaturedResources,
+  getUserResources,
   getResourceById,
   updateResource,
   deleteResource,
@@ -14,9 +15,10 @@ const authMiddleware = require("../middleware/authMiddleware");
 // Public routes
 router.get("/", getApprovedResources);
 router.get("/featured", getFeaturedResources);
-router.get("/:id", authMiddleware, getResourceById);
 
 // Authenticated user routes
+router.get("/user", authMiddleware, getUserResources);
+router.get("/:id", authMiddleware, getResourceById);
 router.post("/", authMiddleware,  addResource);
 router.put("/:id", authMiddleware,  updateResource);
 router.delete("/:id", authMiddleware,  deleteResource);

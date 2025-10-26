@@ -38,6 +38,7 @@ import AdminRegister from './pages/AdminRegister';
 import AdminLogin from './pages/AdminLogin';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AdminAnalytics from './pages/AdminAnalytics';
+import MyUploadsPage from './pages/MyUploadsPage';
 function App() {
   return (
     <Router>
@@ -69,6 +70,7 @@ function App() {
         <Route path="/my-feature-suggestion" element={<MyFeatureSuggestionsPage />} />
         <Route path="/all-content-reports" element={<AllContentReportsPage />} />
         <Route path="/content-reports/:id" element={<ContentReportDetailPage />} />
+        <Route path='/my-uploads' element={<MyUploadsPage/>} />
 
         {/* Admin Routes */}
         <Route path="/admin/login" element={<AdminLogin />} />

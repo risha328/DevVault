@@ -6,12 +6,14 @@ const {
   getTutorialById,
   updateTutorial,
   deleteTutorial,
-  likeTutorial
+  likeTutorial,
+  getUserTutorials
 } = require("../controllers/tutorialController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Public routes
 router.get("/", getTutorials);
+router.get("/user", authMiddleware, getUserTutorials);
 router.get("/:id", getTutorialById);
 
 // Protected routes

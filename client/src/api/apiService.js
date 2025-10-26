@@ -67,6 +67,13 @@ export const resourcesAPI = {
     return handleResponse(response);
   },
 
+  getUserResources: async () => {
+    const response = await fetch(`${API_BASE_URL}/resources/user`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
   create: async (resourceData) => {
     const response = await fetch(`${API_BASE_URL}/resources`, {
       method: 'POST',
@@ -89,6 +96,13 @@ export const tutorialsAPI = {
 
   getById: async (id) => {
     const response = await fetch(`${API_BASE_URL}/tutorials/${id}`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getUserTutorials: async () => {
+    const response = await fetch(`${API_BASE_URL}/tutorials/user`, {
       headers: getAuthHeaders(),
     });
     return handleResponse(response);
