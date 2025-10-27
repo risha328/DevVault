@@ -524,4 +524,12 @@ export const adminAPI = {
     const response = await fetch(`${API_BASE_URL}/admin/public-stats`);
     return handleResponse(response);
   },
+
+  getLeaderboard: async () => {
+    const response = await fetch(`${API_BASE_URL}/admin/leaderboard`, {
+      method: 'GET',
+      headers: getAdminAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };

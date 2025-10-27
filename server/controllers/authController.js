@@ -127,8 +127,8 @@ exports.getUserStats = async (req, res) => {
 
 exports.getLeaderboard = async (req, res) => {
   try {
-    // Get all users
-    const users = await User.find({}).select('-password');
+    // Get all users with role "user" only, excluding admins
+    const users = await User.find({ role: "user" }).select('-password');
 
     // Calculate stats for each user in parallel
     const leaderboardPromises = users.map(async (user) => {

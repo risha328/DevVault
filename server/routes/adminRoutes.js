@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { registerAdmin, loginAdmin, getAdminProfile, getUsers, getResources, updateResourceStatus, getDiscussions, getDiscussionById, getDiscussionReplies, getDashboardStats, getPublicStats, getAnalyticsData } = require("../controllers/adminAuthController");
+const { registerAdmin, loginAdmin, getAdminProfile, getUsers, getResources, updateResourceStatus, getDiscussions, getDiscussionById, getDiscussionReplies, getDashboardStats, getPublicStats, getAnalyticsData, getLeaderboard } = require("../controllers/adminAuthController");
 const authMiddleware = require("../middleware/authMiddleware");
 
 // Public routes
@@ -20,5 +20,6 @@ router.put("/resources/:id/status", authMiddleware, updateResourceStatus);
 router.get("/discussions", authMiddleware, getDiscussions);
 router.get("/discussions/:id", authMiddleware, getDiscussionById);
 router.get("/discussions/:id/replies", authMiddleware, getDiscussionReplies);
+router.get("/leaderboard", authMiddleware, getLeaderboard);
 
 module.exports = router;

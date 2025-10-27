@@ -305,6 +305,80 @@ exports.getPublicStats = async (req, res) => {
   }
 };
 
+exports.getLeaderboard = async (req, res) => {
+  try {
+    const Tutorial = require("../models/Tutorial");
+    const Discussion = require("../models/Discussion");
+    const Issue = require("../models/Issue");
+    const FeatureSuggestion = require("../models/FeatureSuggestion");
+    const DocImprovement = require("../models/DocImprovement");
+    const ContentReport = require("../models/ContentReport");
+
+    // Get all users with role 'user' only
+    const users = await User.find({ role: 'user' }).select('-password');
+
+    // Calculate stats for each user in parallel
+    const leaderboardPromises = users.map(async (user) => {
+      const userId = user._id;
+
+      // Get all contribution counts in parallel
+      const [
+        resourcesCount,
+        tutorialsCount,
+        issuesCount,
+        featureSuggestionsCount,
+        docImprovementsCount,
+        discussionsCount,
+        contentReportsCount
+      ] = await Promise.all([
+        Resource.countDocuments({ createdBy: userId }),
+        Tutorial.countDocuments({ createdBy: userId }),
+        Issue.countDocuments({ createdBy: userId }),
+        FeatureSuggestion.countDocuments({ createdBy: userId }),
+        DocImprovement.countDocuments({ createdBy: userId }),
+        Discussion.countDocuments({ createdBy: userId }),
+        ContentReport.countDocuments({ createdBy: userId })
+      ]);
+
+      // Calculate total contributions
+      const totalContributions = resourcesCount + tutorialsCount + issuesCount +
+                                featureSuggestionsCount + docImprovementsCount +
+                                discussionsCount + contentReportsCount;
+
+      return {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        createdAt: user.createdAt,
+        stats: {
+          resources: resourcesCount,
+          tutorials: tutorialsCount,
+          issues: issuesCount,
+          featureSuggestions: featureSuggestionsCount,
+          docImprovements: docImprovementsCount,
+          discussions: discussionsCount,
+          contentReports: contentReportsCount,
+          totalContributions
+        }
+      };
+    });
+
+    // Wait for all calculations to complete
+    const leaderboard = await Promise.all(leaderboardPromises);
+
+    // Sort by total contributions descending
+    leaderboard.sort((a, b) => b.stats.totalContributions - a.stats.totalContributions);
+
+    res.status(200).json({
+      success: true,
+      leaderboard
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 exports.getAnalyticsData = async (req, res) => {
   try {
     const { timeRange = '30d' } = req.query;
