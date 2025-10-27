@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Users, BarChart3, FileText, MessageSquare, Bookmark, FileBarChart, Lightbulb, Edit } from 'lucide-react';
+import { LayoutDashboard, Users, BarChart3, FileText, MessageSquare, Bookmark, FileBarChart, Lightbulb, Edit, Trophy } from 'lucide-react';
 
 const AdminSidebar = () => {
   const location = useLocation();
@@ -12,6 +12,7 @@ const AdminSidebar = () => {
     { name: 'Discussions', path: '/admin/discussions', icon: MessageSquare },
     { name: 'Bookmarks', path: '/admin/bookmarks', icon: Bookmark },
     { name: 'Reports', path: '/admin/reports', icon: FileBarChart },
+    { name: 'Leaderboard', path: '/admin/leaderboard', icon: Trophy },
     // { name: 'Issues', path: '/admin/issues' },
     { name: 'Feature Suggestions', path: '/admin/feature-suggestions', icon: Lightbulb },
     { name: 'Doc Improvements', path: '/admin/docs-improvements', icon: Edit },

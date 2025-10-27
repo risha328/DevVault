@@ -38,6 +38,7 @@ import AdminRegister from './pages/AdminRegister';
 import AdminLogin from './pages/AdminLogin';
 import AdminProtectedRoute from './components/admin/AdminProtectedRoute';
 import AdminAnalytics from './pages/AdminAnalytics';
+import AdminLeaderboardPage from './pages/AdminLeaderboardPage';
 import MyUploadsPage from './pages/MyUploadsPage';
 import UserProfilePage from './pages/UserProfilePage';
 import UserProfileStatsPage from './pages/UserProfileStatsPage';
@@ -90,6 +91,7 @@ function App() {
         <Route path="/admin/docs-improvements" element={<AdminProtectedRoute><AdminDocsImprovementsPage /></AdminProtectedRoute>} />
         <Route path="/admin/reports" element={<AdminProtectedRoute><AdminReportsPage /></AdminProtectedRoute>} />
         <Route path='/admin/analytics' element={<AdminProtectedRoute><AdminAnalytics /></AdminProtectedRoute>} />
+        <Route path='/admin/leaderboard' element={<AdminProtectedRoute><AdminLeaderboardPage /></AdminProtectedRoute>} />
       </Routes>
     </Router>
   );
