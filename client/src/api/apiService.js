@@ -420,6 +420,49 @@ export const docImprovementsAPI = {
   },
 };
 
+// Notifications APIs
+export const notificationsAPI = {
+  getUserNotifications: async (params = {}) => {
+    const queryString = new URLSearchParams(params).toString();
+    const url = queryString ? `${API_BASE_URL}/notifications?${queryString}` : `${API_BASE_URL}/notifications`;
+    const response = await fetch(url, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  getUnreadCount: async () => {
+    const response = await fetch(`${API_BASE_URL}/notifications/unread-count`, {
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  markAsRead: async (notificationId) => {
+    const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}/read`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  markAllAsRead: async () => {
+    const response = await fetch(`${API_BASE_URL}/notifications/read-all`, {
+      method: 'PUT',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+
+  deleteNotification: async (notificationId) => {
+    const response = await fetch(`${API_BASE_URL}/notifications/${notificationId}`, {
+      method: 'DELETE',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
+};
+
 // Admin APIs
 export const adminAPI = {
   login: async (credentials) => {

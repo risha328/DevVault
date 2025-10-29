@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const Discussion = require("../models/Discussion");
 const DiscussionReply = require("../models/DiscussionReply");
 const User = require("../models/User");
+const { createNotification } = require("../controllers/notificationController");
 
 // GET /api/discussions - Get all discussions with pagination and filtering
 exports.getDiscussions = async (req, res) => {
@@ -116,6 +117,19 @@ exports.createDiscussion = async (req, res) => {
     const populatedDiscussion = await Discussion.findById(discussion._id)
       .populate('createdBy', 'name email');
 
+    // Send notification to all users about new discussion
+    const allUsers = await User.find({ role: 'user' }).select('_id');
+    for (const user of allUsers) {
+      await createNotification({
+        recipient: user._id,
+        type: 'discussion',
+        title: 'New Discussion Started',
+        message: `A new discussion "${title}" has been started in ${category}`,
+        relatedModel: 'Discussion',
+        sender: req.user._id
+      });
+    }
+
     res.status(201).json({ success: true, data: populatedDiscussion });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -212,6 +226,18 @@ exports.addReply = async (req, res) => {
 
     const populatedReply = await DiscussionReply.findById(reply._id)
       .populate('createdBy', 'name email');
+
+    // Send notification to discussion owner if not the replier
+    if (discussion.createdBy.toString() !== req.user._id.toString()) {
+      await createNotification({
+        recipient: discussion.createdBy,
+        type: 'discussion_reply',
+        title: 'New Reply to Your Discussion',
+        message: `Someone replied to your discussion "${discussion.title}"`,
+        relatedModel: 'Discussion',
+        sender: req.user._id
+      });
+    }
 
     res.status(201).json({ success: true, data: populatedReply });
   } catch (err) {

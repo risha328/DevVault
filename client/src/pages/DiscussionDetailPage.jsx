@@ -319,9 +319,9 @@ const DiscussionDetailPage = () => {
                   {/* Discussion Tags */}
                   {discussion.tags && discussion.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-6 pt-6 border-t border-gray-100">
-                      {discussion.tags.map((tag, index) => (
+                      {discussion.tags.map((tag) => (
                         <span
-                          key={index}
+                          key={tag}
                           className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200"
                         >
                           #{tag}

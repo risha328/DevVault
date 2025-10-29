@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../api/apiService';
+import NotificationDropdown from './NotificationDropdown';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -235,14 +236,16 @@ const Navbar = () => {
                 </Link>
               </div>
             ) : (
-              <div className="relative ml-6" ref={userMenuRef}>
-                <button
-                  onClick={() => setShowUserMenu(!showUserMenu)}
-                  className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-semibold text-sm hover:from-blue-600 hover:to-purple-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg hover:shadow-xl transform hover:scale-105"
-                  title={userEmail}
-                >
-                  {userInitial}
-                </button>
+              <div className="flex items-center space-x-4 ml-6">
+                <NotificationDropdown user={{ _id: userId }} />
+                <div className="relative" ref={userMenuRef}>
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center justify-center w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full text-white font-semibold text-sm hover:from-blue-600 hover:to-purple-700 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-900 shadow-lg hover:shadow-xl transform hover:scale-105"
+                    title={userEmail}
+                  >
+                    {userInitial}
+                  </button>
 
                 {/* User Dropdown Menu */}
                 {showUserMenu && (
@@ -272,6 +275,7 @@ const Navbar = () => {
                     </button>
                   </div>
                 )}
+                </div>
               </div>
             )}
           </div>
