@@ -332,6 +332,40 @@ exports.acceptAnswer = async (req, res) => {
   }
 };
 
+// POST /api/discussions/replies/:id/like - Like/unlike a reply
+exports.likeReply = async (req, res) => {
+  try {
+    const reply = await DiscussionReply.findById(req.params.id);
+
+    if (!reply) {
+      return res.status(404).json({ message: "Reply not found" });
+    }
+
+    const userId = req.user._id;
+    const hasLiked = reply.likedBy.includes(userId);
+
+    if (hasLiked) {
+      // Unlike
+      reply.likedBy = reply.likedBy.filter(id => id.toString() !== userId.toString());
+      reply.likes = Math.max(0, reply.likes - 1);
+    } else {
+      // Like
+      reply.likedBy.push(userId);
+      reply.likes += 1;
+    }
+
+    await reply.save();
+
+    res.status(200).json({
+      success: true,
+      likes: reply.likes,
+      hasLiked: !hasLiked
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 // GET /api/discussions/categories - Get available categories
 exports.getCategories = async (req, res) => {
   try {

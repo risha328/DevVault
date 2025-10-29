@@ -232,6 +232,14 @@ export const discussionsAPI = {
     });
     return handleResponse(response);
   },
+
+  likeReply: async (replyId) => {
+    const response = await fetch(`${API_BASE_URL}/discussions/replies/${replyId}/like`, {
+      method: 'POST',
+      headers: getAuthHeaders(),
+    });
+    return handleResponse(response);
+  },
 };
 
 // Feature Suggestions APIs
