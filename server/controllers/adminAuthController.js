@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Resource = require("../models/Resource");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const { createAdminApprovalNotification } = require("../controllers/notificationController");
 
 exports.registerAdmin = async (req, res) => {
   try {
@@ -77,9 +78,14 @@ exports.updateResourceStatus = async (req, res) => {
       return res.status(400).json({ message: 'Invalid status' });
     }
 
-    const resource = await Resource.findByIdAndUpdate(id, { status }, { new: true });
+    const resource = await Resource.findByIdAndUpdate(id, { status }, { new: true }).populate('createdBy', 'name email');
     if (!resource) {
       return res.status(404).json({ message: 'Resource not found' });
+    }
+
+    // Send notification to user if resource is approved
+    if (status === 'approved' && resource.createdBy) {
+      await createAdminApprovalNotification(resource.createdBy._id, 'resource', resource.title, req.user.name || 'Admin');
     }
 
     res.json({ success: true, resource });
