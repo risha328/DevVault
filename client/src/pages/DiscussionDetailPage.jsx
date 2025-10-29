@@ -17,6 +17,8 @@ import {
   Bookmark
 } from 'lucide-react';
 import { discussionsAPI } from '../api/apiService';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 const DiscussionDetailPage = () => {
   const { id } = useParams();
@@ -143,8 +145,18 @@ const DiscussionDetailPage = () => {
   };
 
   const handleLike = async (replyId) => {
-    // Implement like functionality
-    console.log('Like reply:', replyId);
+    try {
+      const data = await discussionsAPI.likeReply(replyId);
+      // Update the reply in the state
+      setReplies(prev => prev.map(reply =>
+        reply._id === replyId
+          ? { ...reply, likes: data.likes, likedBy: data.hasLiked ? [...(reply.likedBy || []), localStorage.getItem('userId')] : (reply.likedBy || []).filter(id => id !== localStorage.getItem('userId')) }
+          : reply
+      ));
+    } catch (err) {
+      console.error('Error liking reply:', err);
+      setError('Failed to like reply');
+    }
   };
 
   const handleShare = async () => {
@@ -216,8 +228,10 @@ const DiscussionDetailPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <>
+      <Navbar />
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header Navigation */}
         <div className="flex items-center justify-between mb-8">
           <button
@@ -570,6 +584,8 @@ const DiscussionDetailPage = () => {
         </div>
       </div>
     </div>
+    <Footer />
+  </>
   );
 };
 

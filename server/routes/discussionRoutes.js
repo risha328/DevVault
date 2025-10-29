@@ -11,6 +11,7 @@ const {
   getReplies,
   deleteReply,
   acceptAnswer,
+  likeReply,
   getCategories
 } = require("../controllers/discussionController");
 
@@ -28,5 +29,6 @@ router.delete("/:id", auth, deleteDiscussion);
 router.post("/:id/replies", auth, addReply);
 router.delete("/replies/:id", auth, deleteReply);
 router.put("/replies/:id/accept", auth, acceptAnswer);
+router.post("/replies/:id/like", auth, likeReply);
 
 module.exports = router;
